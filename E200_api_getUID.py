@@ -7,6 +7,9 @@ def E200_api_getUID(struct,val,f):
 	vals = struct['dat']
 
 	uids = uids[:,0]
-	vals = _convertH5ref(vals,f)
+	try:
+		vals = _convertH5ref(vals,f)
+	except:
+		vals = np.array(vals).flatten()
 
 	return uids[vals==val]
