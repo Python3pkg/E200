@@ -2,15 +2,16 @@ import h5py as _h5
 import numpy as _np
 import pdb
 import matplotlib.pyplot as _plt
-import mytools as _mt
+# import mytools as _mt
+from E200_api_getdat import E200_api_getdat
 import scipy.io as _spio
 
 def E200_load_images(imgstr,h5file,uids=None):
-	imgdat = _mt.E200.E200_api_getdat(imgstr,h5file)
+	imgdat = E200_api_getdat(imgstr,h5file)
 	imgs = [_plt.imread(val) for val in imgdat]
 	imgs = _np.float64(imgs)
 
-	imgbgdat = _mt.E200.E200_api_getdat(imgstr,h5file,fieldname='background_dat')
+	imgbgdat = E200_api_getdat(imgstr,h5file,fieldname='background_dat')
 	# print imgbgdat
 	for i,val in enumerate(imgbgdat):
 		# print val
