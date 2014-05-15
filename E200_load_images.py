@@ -5,10 +5,12 @@ import matplotlib.pyplot as _plt
 # import mytools as _mt
 from E200_api_getdat import E200_api_getdat
 import scipy.io as _spio
+from get_remoteprefix import get_remoteprefix
 
 def E200_load_images(imgstr,h5file,uids=None):
+	prefix = get_remoteprefix()
 	imgdat = E200_api_getdat(imgstr,h5file)
-	imgs = [_plt.imread(val) for val in imgdat]
+	imgs = [_plt.imread(os.path.join(val,prefix)) for val in imgdat]
 	imgs = _np.float64(imgs)
 
 	imgbgdat = E200_api_getdat(imgstr,h5file,fieldname='background_dat')
