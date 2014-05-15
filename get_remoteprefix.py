@@ -73,4 +73,4 @@ def get_configpath():
 
 def get_directory():
 	window = QtGui.QFileDialog.getExistingDirectory(directory='/')
-	return window
+	return str(window)
