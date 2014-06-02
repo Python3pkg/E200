@@ -8,13 +8,39 @@ import matplotlib.pyplot as plt
 import mytools as mt
 import copy
 
-def eaxis(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None):
+def eaxis(camname, *args, **kwargs):
+	if camname=='CMOS_FAR':
+		# return eaxis = eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None)
+		return eaxis_CMOS_far(*args,**kwargs)
+	elif camname=='ELANEX':
+		return eaxis_ELANEX(*args,**kwargs)
+
+def eaxis_ELANEX(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
+	ymotor=np.float64(ymotor)
+	ypinch = 130
+	print ymotor/res
+	y=y+ymotor/res
+	ypinch = 130 + (-1e-3)/(4.65e-6)
+
+	# E0=20.35 observed at 130px, motor position -1mm
+	E0=20.35
+
+	theta = 6e-3
+	Lmag = 2*4.889500000E-01
+	Ldrift=8.792573
+
+	out=E_no_eta(y,ypinch,res,Ldrift,Lmag,E0,theta)
+	# print out
+	return out
+
+def eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,img=None):
 	# The axis is flipped.  Since the offset is arbitrary and
 	# calibrated for below, I can use an arbitrary offset here
 	# in order to flip the axis. I've decided on a random value of 4000
 	# since I'm pretty sure none of our photos have a resolution
 	# greater than that, and I'm trying to error out on a negative
 	# value.
+	ypinch = 1660
 	y_flip_offset = max(y) + 10
 	y = y_flip_offset - y
 	ypinch = y_flip_offset - ypinch
@@ -43,14 +69,14 @@ def eaxis(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None):
 
 	Lmag = 2*4.889500000E-01
 	Ldrift=8.792573 + 0.8198
-	out = np.zeros(y.shape[0])
+	# out = np.zeros(y.shape[0])
 	# for i,yval in enumerate(y):
 	# 	args=np.array([yval,ypinch,res,E0,theta,Ldrift,Lmag,etay,etapy])
 	# 	outval=spopt.minimize(merit_fcn,x0=np.array([20]),args=args)
 	# 	out[i]=outval.x[0]
 	#
 	out=E_no_eta(y,ypinch,res,Ldrift,Lmag,E0,theta)
-	print out
+	# print out
 	return out
 
 def merit_fcn(E,ypx,ypinch,res,E0,theta,Ldrift,Lmag,eta0=np.float64(0),etap0=np.float64(0)):
