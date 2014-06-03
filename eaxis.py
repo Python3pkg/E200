@@ -11,6 +11,7 @@ import copy
 def eaxis(camname, *args, **kwargs):
 	if camname=='CMOS_FAR':
 		# return eaxis = eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None)
+		ymotor=kwargs.pop('ymotor')
 		return eaxis_CMOS_far(*args,**kwargs)
 	elif camname=='ELANEX':
 		return eaxis_ELANEX(*args,**kwargs)
