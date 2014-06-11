@@ -12,22 +12,24 @@ def E200_load_images(imgstr,h5file,uids=None):
 	try:
 		remote_bool = h5file['data']['VersionInfo']['remotefiles']['dat'][0,0]
 	except:
-		remote_bool = False
+		remote_bool = True
 	if remote_bool:
 		prefix = get_remoteprefix()
 	else:
 		prefix = ''
-	# print 'Prefix is: [{}]'.format(prefix)
+	print 'Prefix is: [{}]'.format(prefix)
 
 	imgdat = E200_api_getdat(imgstr,h5file,uids=uids)
-	imgs = [_plt.imread(os.path.join(prefix,val)) for val in imgdat]
+	# for val in imgdat:
+	#         print os.path.join(prefix,val[1:])
+	imgs = [_plt.imread(os.path.join(prefix,val[1:])) for val in imgdat]
 	imgs = _np.float64(imgs)
 
 	imgbgdat = E200_api_getdat(imgstr,h5file,fieldname='background_dat',uids=uids)
 	# print imgbgdat
 	for i,val in enumerate(imgbgdat):
 		# print val
-		val = os.path.join(prefix,val)
+		val = os.path.join(prefix,val[1:])
 		mat = _spio.loadmat(val)
 		imgbg = mat['img']
 		
