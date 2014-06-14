@@ -95,10 +95,10 @@ def merit_fcn(E,ypx,ypinch,res,E0,theta,Ldrift,Lmag,eta0=np.float64(0),etap0=np.
 	return np.power(y-yana,2)*1e14
 
 def yanalytic(E,E0,theta,Ldrift,Lmag,eta0,etap0):
-	return y_no_eta(E,E0,theta,Ldrift) + (E/E0 -1)*(eta0+etap0*(Ldrift+Lmag))
+	return y_no_eta(E,E0,theta,Ldrift,Lmag) + (E/E0 -1)*(eta0+etap0*(Ldrift+Lmag))
 
-def y_no_eta(E,E0,theta,Ldrift):
-	return Ldrift/np.sqrt(np.power(E/(E0*np.sin(theta)),2)-1)
+def y_no_eta(E,E0,theta,Ldrift,Lmag):
+	return Ldrift/np.sqrt(np.power(E/(E0*np.sin(theta)),2)-1) + (E*Lmag)/(E0*np.sin(theta)) * (1 - np.sqrt(1-np.power(E0*np.sin(theta)/E,2)))
 
 def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta):
 	yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0=0,etap0=0) - ypinch*res
