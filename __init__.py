@@ -4,8 +4,12 @@ from E200_api_getUID import E200_api_getUID
 from E200_load_images import E200_load_images
 from E200_api_getdat import E200_api_getdat
 from eaxis import eaxis
+from eaxis import eaxis_ELANEX
+from eaxis import yaxis_ELANEX
 from eaxis import yanalytic
 from eaxis import E_no_eta
+from eaxis import y_no_eta
+
 from get_remoteprefix import get_remoteprefix
 import h5py as _h5
 

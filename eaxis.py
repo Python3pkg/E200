@@ -19,7 +19,8 @@ def eaxis(camname, *args, **kwargs):
 def eaxis_ELANEX(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
 	ymotor=np.float64(ymotor)
 	ypinch = 130
-	print ymotor/res
+	# print ymotor
+	# print ymotor/res
 	y=y+ymotor/res
 	ypinch = 130 + (-1e-3)/(4.65e-6)
 
@@ -31,8 +32,34 @@ def eaxis_ELANEX(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=
 	Ldrift=8.792573
 
 	out=E_no_eta(y,ypinch,res,Ldrift,Lmag,E0,theta)
-	# print out
 	return out
+
+def yaxis_ELANEX(E,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
+	# y=0
+	def merit_fcn(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
+		val = eaxis_ELANEX(y,res,E0,etay,etapy,ypinch,img,ymotor)
+		print '==========='
+		print y
+		print val
+		print E
+		out = (E-val)**2
+		print out
+		return out
+
+	etay   = 0
+	etapy  = 0
+	ypinch = 0
+	img    = 0
+
+
+	# args = np.array([res,E0,etay,etapy,ypinch,img,ymotor])
+	args = (res,E0,etay,etapy,ypinch,img,ymotor)
+
+	# print merit_fcn(0,res,E0,etay,etapy,ypinch,img,ymotor)
+	# print args
+	outval=spopt.minimize(merit_fcn,x0=np.array([-4000]),args=args,tol=1e-7)
+	print outval
+	return outval.x[0]
 
 def eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,img=None):
 	# The axis is flipped.  Since the offset is arbitrary and
@@ -80,25 +107,28 @@ def eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,img=None):
 	# print out
 	return out
 
-def merit_fcn(E,ypx,ypinch,res,E0,theta,Ldrift,Lmag,eta0=np.float64(0),etap0=np.float64(0)):
-	E=E[0]
-	yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0,etap0) - ypinch*res
-	y = ypx*res + yoffset
-	yana = yanalytic(E,E0,theta,Ldrift,Lmag,eta0,etap0)
-
-	# print '====================='
-	# print E
-	# print y
-	# print yana
-	# print np.power(y-yana,2)*1e14
-	# print '====================='
-	return np.power(y-yana,2)*1e14
+# def merit_fcn(E,ypx,ypinch,res,E0,theta,Ldrift,Lmag,eta0=np.float64(0),etap0=np.float64(0)):
+# 	E=E[0]
+# 	yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0,etap0) - ypinch*res
+# 	y = ypx*res + yoffset
+# 	yana = yanalytic(E,E0,theta,Ldrift,Lmag,eta0,etap0)
+# 
+# 	# print '====================='
+# 	# print E
+# 	# print y
+# 	# print yana
+# 	# print np.power(y-yana,2)*1e14
+# 	# print '====================='
+# 	return np.power(y-yana,2)*1e14
 
 def yanalytic(E,E0,theta,Ldrift,Lmag,eta0,etap0):
 	return y_no_eta(E,E0,theta,Ldrift,Lmag) + (E/E0 -1)*(eta0+etap0*(Ldrift+Lmag))
 
 def y_no_eta(E,E0,theta,Ldrift,Lmag):
 	return Ldrift/np.sqrt(np.power(E/(E0*np.sin(theta)),2)-1) + (E*Lmag)/(E0*np.sin(theta)) * (1 - np.sqrt(1-np.power(E0*np.sin(theta)/E,2)))
+
+# def my_E_no_eta(y,E0,theta,Ldrift,Lmag):
+	
 
 def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta):
 	yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0=0,etap0=0) - ypinch*res
