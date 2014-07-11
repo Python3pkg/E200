@@ -6,6 +6,8 @@ def set_QS_energy_ELANEX(E):
 	    return VAL
 
 def bdes2K1(bdes,E):
-	Brho=E/0.029979
-	K1 = bdes/(Brho)
+	bdes = _np.float64(bdes)
+	E    = _np.float64(E)
+	Brho = E/0.029979
+	K1   = bdes/(Brho)
 	return K1
