@@ -4,19 +4,35 @@ import sys
 import ConfigParser
 import inspect
 from PyQt4 import QtGui,QtCore
+import mytools.qt as mtqt
+import numpy as _np
 
+__all__ = ['get_remoteprefix','set_remoteprefix','choose_remoteprefix','_get_configpath','_get_directory','_get_datapath']
+def_prefix='/Volumes/PWFA_4big'
 
-def get_remoteprefix():
-	app = QtGui.QApplication.instance()
-	if not app:
-		app = QtGui.QApplication([sys.argv[0]])
+def choose_remoteprefix(pathstart=def_prefix,verbose=True):
+	app=mtqt.get_app()
+	if not os.path.isdir(pathstart):
+		pathstart = '/'
+	prefix = mtqt.getExistingDirectory(caption='Change prefix',directory=pathstart)
+	if not os.path.isdir(prefix):
+		raise IOError('No directory selected.')
+
+	prefix=_test_prefix(prefix)
+
+	if verbose:
+		print 'New prefix is: {}'.format(prefix)
+
+	return prefix
+
+def get_remoteprefix(test=True):
+	app=mtqt.get_app()
 
 	# =====================================
 	# Default prefix
 	# =====================================
-	def_prefix='/Volumes/PWFA_4big'
 
-	config_path = get_configpath()
+	config_path = _get_configpath()
 
 	# =====================================
 	# Try to read the prefix
@@ -27,50 +43,68 @@ def get_remoteprefix():
 		prefix=config.get('Prefs','prefix')
 	except:
 		prefix = def_prefix
+		set_remoteprefix(prefix)
 
 	# =====================================
 	# Test the prefix
 	# =====================================
-	datapath = os.path.join(prefix,'nas','nas-li20-pm00')
-	while not os.path.isdir(datapath):
-		# Drive may not be mounted: warn user, allow to mount drive or change prefix
-		msgbox = QtGui.QMessageBox()
-		msgbox.setText('WARNING: Path to data doesn\'t exist!')
-		msgbox.setInformativeText('Data not found at {}. Drive may not be mounted.'.format(datapath))
-		tryagainbtn = msgbox.addButton('Try again.',msgbox.AcceptRole)
-		msgbox.setDefaultButton(tryagainbtn)
-		locatebtn = msgbox.addButton('Locate folder containing /nas.',msgbox.AcceptRole)
-		abortbtn = msgbox.addButton(msgbox.Abort)
-		msgbox.setEscapeButton(abortbtn)
-		msgbox.exec_()
-
-		if msgbox.clickedButton() == abortbtn:
-			raise IOError('No valid directory chosen.')
-		elif msgbox.clickedButton() == locatebtn:
-			prefix=get_directory()
-			set_remoteprefix(config,prefix)
-			datapath = os.path.join(prefix,'nas','nas-li20-pm00')
-			# datapath=prefix
+	prefix=_test_prefix(prefix)
 
 	return prefix
 
-def set_remoteprefix(config,prefix):
+def _get_datapath(prefix=None):
+	if prefix == None:
+		prefix = get_remoteprefix()
+	datapath = os.path.join(prefix,'nas','nas-li20-pm00')
+	return datapath
+
+def _nas_in_path(prefix):
+	datapath = _get_datapath(prefix)
+	return os.path.isdir(datapath)
+
+def _test_prefix(prefix):
+	while ( not _nas_in_path(prefix) ):
+		title = 'Data location not found!'
+		maintext = 'WARNING: Path to data doesn\'t exist!'
+		infotext = 'Data not found at {}. Drive may not be mounted.'.format(prefix)
+		buttons = _np.array([
+			mtqt.Button('Try again.',QtGui.QMessageBox.AcceptRole,buttontype='Default'),
+			mtqt.Button('Locate folder containing /nas.',QtGui.QMessageBox.AcceptRole),
+			mtqt.Button(QtGui.QMessageBox.Abort,buttontype='Escape'),
+			])
+
+		buttonbox = mtqt.ButtonMsg(title=title,maintext=maintext,infotext=infotext,buttons=buttons)
+		clicked = buttonbox.clickedArray
+		# Locate folder...
+		if clicked[1]:
+			prefix=choose_remoteprefix(verbose=False)
+		elif clicked[2]:
+			raise IOError('No valid directory chosen.')
+
+	set_remoteprefix(prefix)
+	return prefix
+
+
+def set_remoteprefix(prefix,verbose=False):
+	config=ConfigParser.ConfigParser()
 	try:
 		config.add_section('Prefs')
 	except:
 		pass
 
 	config.set('Prefs','prefix',prefix)
-	with open(get_configpath(),'wb') as configfile:
+	with open(_get_configpath(),'wb') as configfile:
 		config.write(configfile)
+	if verbose:
+		print 'Remote prefix now: {}'.format(get_remoteprefix())
 
-def get_configpath():
+def _get_configpath():
 	this_path=inspect.stack()[0][1]
 	this_dir = os.path.dirname(this_path)
 	config_path = os.path.join(this_dir,'FACET_data.cfg')
 
 	return config_path
 
-def get_directory():
+def _get_directory():
 	window = QtGui.QFileDialog.getExistingDirectory(directory='/')
 	return str(window)

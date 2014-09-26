@@ -7,6 +7,7 @@ import mytools.slactrac as sltr
 import matplotlib.pyplot as plt
 import mytools as mt
 import copy
+__all__ = ['eaxis', 'eaxis_ELANEX', 'yaxis_ELANEX', 'yanalytic', 'E_no_eta', 'y_no_eta']
 
 def eaxis(camname, *args, **kwargs):
 	if camname=='CMOS_FAR':
