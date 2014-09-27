@@ -18,9 +18,9 @@ from get_valid_filename import *
 import h5py as _h5
 
 class Data(object):
-	def __init__(self,filename):
+	def __init__(self,filename,experiment='E200'):
 		self._filename=filename
-		self._f=E200_load_data(filename)
+		self._f=E200_load_data(filename,experiment)
 	
 		self.data=self._f['data']
 		# self.data=datalevel()
