@@ -51,13 +51,25 @@ class Filename(object):
 		processed_dir = _re.sub('nas/nas-li20-pm0.','processed_data',processed_dir)
 		return processed_dir
 	processed_dir = property(_get_processed_dir)
+	py_processed_dir = property(_get_processed_dir)
+
+	def _get_processed_filename(self):
+		fileparts = _path.splitext(self.filename)
+		final_filename = '{}_processed{}'.format(fileparts[0],fileparts[1])
+		return final_filename
+	processed_filename = property(_get_processed_filename)
 
 	def _get_processed_path(self):
-		fileparts = _path.splitext(self.filename)
-		final_filename = _path.join('{}_processed{}'.format(fileparts[0],fileparts[1]))
-		processed_path= _path.join(self.processed_dir,final_filename)
-		return processed_path
+		return _path.join(self.processed_dir,self.processed_filename)
 	processed_path = property(_get_processed_path)
+
+	def _get_py_processed_filename(self):
+		return _re.sub('processed','py_processed',self.processed_filename)
+	py_processed_filename = property(_get_py_processed_filename)
+	
+	def _get_py_processed_path(self):
+		return _path.join(self.py_processed_dir,self.py_processed_filename)
+	py_processed_path = property(_get_py_processed_path)
 
 # def [dir_beg, dir_mid, filename,varargout]=get_valid_filename(pathstr,varargin)
 def get_valid_filename(pathstr,experiment,verbose=False):
@@ -86,7 +98,7 @@ def get_valid_filename(pathstr,experiment,verbose=False):
 			subtext='(External drive may not be mounted.)'
 			buttons=_np.array([
 				_mtqt.Button('Try again',_QtGui.QMessageBox.AcceptRole),
-				_mtqt.Button('Change prefix',_QtGui.QMessageBox.ActionRole,buttontype='Default'),
+				_mtqt.Button('Change prefix',_QtGui.QMessageBox.ActionRole,default=True),
 				_mtqt.Button('Locate file',_QtGui.QMessageBox.ActionRole),
 				_QtGui.QMessageBox.Abort
 				])

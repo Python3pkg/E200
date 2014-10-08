@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os
 import sys
 import ConfigParser
@@ -68,9 +67,9 @@ def _test_prefix(prefix):
 		maintext = 'WARNING: Path to data doesn\'t exist!'
 		infotext = 'Data not found at {}. Drive may not be mounted.'.format(prefix)
 		buttons = _np.array([
-			mtqt.Button('Try again.',QtGui.QMessageBox.AcceptRole,buttontype='Default'),
+			mtqt.Button('Try again.',QtGui.QMessageBox.AcceptRole,default=True),
 			mtqt.Button('Locate folder containing /nas.',QtGui.QMessageBox.AcceptRole),
-			mtqt.Button(QtGui.QMessageBox.Abort,buttontype='Escape'),
+			mtqt.Button(QtGui.QMessageBox.Abort,escape=True),
 			])
 
 		buttonbox = mtqt.ButtonMsg(title=title,maintext=maintext,infotext=infotext,buttons=buttons)
