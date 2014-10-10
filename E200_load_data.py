@@ -19,6 +19,10 @@ class Data(object):
 		# self.data=datalevel()
 		# recursivePopulate(self._data,self)
 
+	def close(self):
+		self.read_file.close()
+		self.write_file.close()
+
 def E200_load_data(filename,experiment='E200',writefile=None,verbose=False):
 	if verbose: print 'Input is: filename={} experiment={}'.format(filename,experiment)
 	vfn = Filename(path=filename,experiment=experiment)
@@ -50,9 +54,9 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False):
 		maintext = 'WARNING: File already exists!'
 		infotext = 'Overwrite file: {}?'.format(writefile)
 		buttons = np.array([
-			mtqt.Button('Overwrite',QtGui.QMessageBox.AcceptRole,default=True),
+			mtqt.Button('Overwrite',QtGui.QMessageBox.AcceptRole),
 			mtqt.Button(QtGui.QMessageBox.Abort,escape=True),
-			mtqt.Button('Load file')
+			mtqt.Button('Load file',default=True)
 			])
 		buttonbox = mtqt.ButtonMsg(title=title,maintext=maintext,infotext=infotext,buttons=buttons)
 		clicked = buttonbox.clickedArray
