@@ -2,13 +2,39 @@ import numpy as np
 import h5py as h5
 import warnings
 from scalar_update import *
+from vector_update import *
+from array_update import *
 
 def E200_api_updateUID(group,UID,value,verbose=False):
+	datatype = group.attrs['datatype']
+	if verbose: print '\tDatatype is {}'.format(datatype)
+
 	# ======================================
-	# Validate value, UID same size
+	# Validate value, uid same size
 	# ======================================
-	if np.size(value) != np.size(UID):
-		raise ValueError('Values and UIDs not commensurate sizes')
+	if datatype == 'scalar':
+		if np.size(value) != np.size(UID):
+			raise ValueError('UIDs and values not commensurate sizes. UIDs: {}, Values: {}'.format(UID,value))
+
+	elif datatype == 'vector':
+		# ======================================
+		# Get right length of value
+		# ======================================
+		if np.ndim(value) == 1:
+			if np.size(UID) != 1:
+				raise ValueError('UIDs and values not commensurate sizes. UIDs: {}, Values: {}'.format(UID,value))
+
+		elif np.ndim(value) == 2:
+			if np.shape(value)[0] != np.size(UID):
+				raise ValueError('UIDs and values not commensurate sizes. UIDs: {}, Values: {}'.format(UID,value))
+		else:
+			raise ValueError('Number of dimensions for array of vectors incorrect: {} dimensions'.format(np.ndim(value)))
+
+	elif datatype == 'array':
+			raise NotImplementedError('Arrays not implemented yet')
+
+	else:
+		raise TypeError('This is not a group supported by the E200_api')
 
 	if np.size(UID)>1:
 		# ======================================
@@ -33,9 +59,6 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 		# Retrieve data type
 		# ======================================
 		if verbose: print 'Single UID entered: {}'.format(UID)
-		datatype = group.attrs['datatype']
-
-		if verbose: print '\tDatatype is {}'.format(datatype)
 	
 		# ======================================
 		# Scalar type
@@ -44,9 +67,11 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 			group=scalar_update(group,UID,value,verbose)
 
 		elif datatype == 'vector':
-			pass
+			group=vector_update(group,UID,value,verbose)
+
 		elif datatype == 'array':
-			pass
+			raise NotImplementedError('Arrays not implemented yet')
+
 		else:
 			raise TypeError('This is not a group supported by the E200_api')
 

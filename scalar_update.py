@@ -3,11 +3,12 @@ import numpy as _np
 def scalar_update(group,UID,value,verbose):
 	uids = group['UID'].value
 	dat  = group['dat'].value
+	if verbose: print '\tAdding UID: {}, value: {}'.format(UID,value)
 	if _np.size(uids) == 0:
 		# ======================================
 		# If first entry
 		# ======================================
-		if verbose: print '\tNo UIDs present yet, adding UID: {}, value: {}'.format(UID,value)
+		if verbose: print '\tNo UIDs present yet'
 
 		del group['UID']
 		del group['dat']
@@ -30,7 +31,7 @@ def scalar_update(group,UID,value,verbose):
 		if type(value) == dat.dtype:
 			if verbose: print '\tInput type matches existing type'
 		else:
-			raise TypeError('Input value type "{}" doesn''t match existing type "{}"'.format(type(value),dat.dtype))
+			raise TypeError('Input value type "{}" doesn\'t match existing type "{}"'.format(type(value),dat.dtype))
 		
 		# ======================================
 		# Find matches
@@ -58,7 +59,7 @@ def scalar_update(group,UID,value,verbose):
 			# ======================================
 			if verbose:
 				print '\tOne match, replacing.'
-				print '\tOld value: {}, New value: {}'.format(dat[uid_match],value)
+				print '\tOld value: {}, New value: {}'.format(dat[uid_match][0],value)
 			ind = _np.where(uid_match)[0][0]
 			group['dat'][ind] = value
 			
