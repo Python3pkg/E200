@@ -1,45 +1,56 @@
 import numpy as np
+import h5py as h5
+import warnings
+from scalar_update import *
 
-def E200_api_updateUID(group,val,UID,verbose=False):
-	if type(UID) == np.ndarray:
-		UID = UID[0]
-	# If UID exists
-	val = np.array([val])
-	if 'UID' in group:
-		# Get UIDS
-		uids=group['UID'][()]
-		dat = group['dat'][()]
-		if np.ndim(uids)==0:
-			# print 'a'
-			if UID == uids:
-				print 'oh noes'
-				dat = val
-			else:
-				uids = np.append(uids,UID)
-				dat = np.append(dat,val,axis=0)
-				print dat
-				del group['UID']
-				group['UID'] = uids
-		elif UID in uids:
-			# print 'b'
-			dat[uids==UID] = val
-		else:
-			# print 'hello'
-			uids = np.append(uids,UID)
-			dat = np.append(dat,val,axis=0)
-			del group['UID']
-			group['UID'] = uids
+def E200_api_updateUID(group,UID,value,verbose=False):
+	# ======================================
+	# Validate value, UID same size
+	# ======================================
+	if np.size(value) != np.size(UID):
+		raise ValueError('Values and UIDs not commensurate sizes')
 
-		del group['dat']
-		group['dat']=dat
-	# If no UID exists
+	if np.size(UID)>1:
+		# ======================================
+		# Run through list of UID's, processing
+		# individually
+		# ======================================
+		if verbose: print 'Multiple UIDs entered, updating recursively'
+
+		# ======================================
+		# Check for duplicate UIDs and sort
+		# ======================================
+		UID_sorted,inds = np.unique(UID,return_index=True)
+		value_sorted    = value[inds]
+		if np.size(UID_sorted) != np.size(UID):
+			raise ValueError('UIDs aren''t unique: {}'.format(UID))
+
+		for i,uid in enumerate(UID_sorted):
+			E200_api_updateUID(group,value=value_sorted[i],UID=uid,verbose=verbose)
+
 	else:
-		# Add UID
-		group['UID'] = [UID]
-		group['dat'] = val
+		# ======================================
+		# Retrieve data type
+		# ======================================
+		if verbose: print 'Single UID entered: {}'.format(UID)
+		datatype = group.attrs['datatype']
 
-	group.file.flush()
-	if verbose:
-		print 'UID in file is: {}'.format(group['UID'][()])
-		print 'Dat in file is:'
-		print group['dat'][()]
+		if verbose: print '\tDatatype is {}'.format(datatype)
+	
+		# ======================================
+		# Scalar type
+		# ======================================
+		if datatype == 'scalar':
+			group=scalar_update(group,UID,value,verbose)
+
+		elif datatype == 'vector':
+			pass
+		elif datatype == 'array':
+			pass
+		else:
+			raise TypeError('This is not a group supported by the E200_api')
+
+		# ======================================
+		# Write changes to file
+		# ======================================
+		group.file.flush()

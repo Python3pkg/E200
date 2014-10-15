@@ -3,7 +3,7 @@ import pdb as _pdb
 from classes import *
 import pdb
 
-def E200_api_getdat(dataset,uids=None,fieldname='dat'):
+def E200_api_getdat(dataset,uids=None,fieldname='dat',verbose=False):
 	version_bool = 'origin' in dataset.file.attrs.keys()
 	if version_bool:
 		python_version_bool = (dataset.file.attrs['origin']=='python-h5py')
@@ -22,11 +22,20 @@ def E200_api_getdat(dataset,uids=None,fieldname='dat'):
 
 	avail_uids = dataset['UID'][()]
 
-	if uids==None:
+	if _np.size(avail_uids)==1:
+		if avail_uids==uids:
+			out_uids=_np.array([avail_uids])
+			out_vals=_np.array([vals])
+		else:
+			out_uids=_np.array([])
+			out_vals=_np.array([])
+	elif uids==None:
 		out_uids = avail_uids
+		out_vals = vals
 	else:
 		valbool=_np.in1d(avail_uids,uids)
-		vals = vals[valbool]
+		out_vals = vals[valbool]
 
 		out_uids = avail_uids[valbool]
-	return E200_Dat(vals,out_uids,field=fieldname)
+
+	return E200_Dat(out_vals,out_uids,field=fieldname)
