@@ -2,9 +2,6 @@ import numpy as _np
 import h5py as _h5
 import uuid as _uuid
 import warnings
-from scalar_update import *
-from vector_update import *
-from array_update import *
 
 def E200_api_updateUID(group,UID,value,verbose=False):
 	if _np.size(UID)>1:
@@ -27,7 +24,7 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 
 	else:
 	
-		ref_dtype = h5.special_dtype(ref=h5.Reference)
+		ref_dtype = _h5.special_dtype(ref=_h5.Reference)
 	
 		# ======================================
 		# Get basic groups

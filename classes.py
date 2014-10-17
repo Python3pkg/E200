@@ -11,6 +11,7 @@ class E200_Dat(object):
 	def _get_uid(self):
 		return self._uid
 	uid=property(_get_uid)
+	UID=property(_get_uid)
 
 	def _get_field(self):
 		return self._field
