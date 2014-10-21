@@ -29,7 +29,7 @@ if verbose:
 =================================
 Scalar test
 ================================='''
-test_scalar = mt.E200.E200_create_data(scalars,'test_scalar',datatype='array')
+test_scalar = mt.E200.E200_create_data(scalars,'test_scalar')
 test_uids   = np.array([6,7,8,1,4,5])
 test_values = np.array(test_uids*1.1,dtype=np.float64)
 
@@ -66,7 +66,7 @@ if verbose:
 =================================
 Vector test
 ================================='''
-test_vector = mt.E200.E200_create_data(vectors,'test_vector',datatype='array')
+test_vector = mt.E200.E200_create_data(vectors,'test_vector')
 test_uids   = np.array([6,7,8,1,4,5])
 base = np.array([1,10,100],dtype=np.float64)
 test_values = np.array(np.outer(test_uids,base),dtype=np.float64)
@@ -114,7 +114,7 @@ if verbose:
 =================================
 Array test
 ================================='''
-test_array = mt.E200.E200_create_data(arrays,'test_array',datatype='array')
+test_array = mt.E200.E200_create_data(arrays,'test_array')
 test_uids   = np.array([6,7,8,1,4,5])
 base_array = np.array([[1,10],[100,1000]])
 test_values = np.empty(test_uids.shape,dtype=np.object)
