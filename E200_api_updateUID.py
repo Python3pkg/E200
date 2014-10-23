@@ -2,18 +2,17 @@ import numpy as _np
 import h5py as _h5
 import uuid as _uuid
 import warnings
-from mytools import Indent
+import logging
+logger = logging.getLogger(__name__)
+#  print 'E200_api_updateUID.py name is {}'.format(__name__)
 
 def E200_api_updateUID(group,UID,value,verbose=False):
-	indent = Indent.Indent()
-
 	if _np.size(UID)>1:
 		# ======================================
 		# Run through list of UID's, processing
 		# individually
 		# ======================================
-		Indent.vprint(indent,'Multiple UIDs entered, updating recursively')
-		indent.level += 1
+                logger.info('Multiple UIDs entered, updating recursively')
 
 		# ======================================
 		# Check for duplicate UIDs and sort
@@ -40,8 +39,8 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 		uids      = uid_dset.value
 		dat_refs  = dat_dset.value
 	
-		Indent.vprint(indent,'Adding UID: {}, value: {}'.format(UID,value))
-		Indent.vprint(indent,'UID type is: {}'.format(type(UID)))
+		logger.debug('Adding UID: {}, value: {}'.format(UID,value))
+		logger.debug('UID type is: {}'.format(type(UID)))
 	
 		# ======================================
 		# Validate it's a numpy array

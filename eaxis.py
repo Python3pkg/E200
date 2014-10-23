@@ -3,7 +3,6 @@
 import numpy as np
 import scipy.io as sio
 import scipy.optimize as spopt
-import mytools.slactrac as sltr
 import matplotlib.pyplot as plt
 import mytools as mt
 import copy
