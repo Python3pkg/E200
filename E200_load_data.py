@@ -8,6 +8,9 @@ from get_valid_filename import *
 from warnings import warn
 import mytools.qt as mtqt
 from PyQt4 import QtGui,QtCore
+import logging
+loggerlevel = logging.DEBUG
+logger=logging.getLogger(__name__)
 
 __all__ = ['Data','E200_load_data']
 
@@ -24,16 +27,17 @@ class Data(object):
 		self.write_file.close()
 
 def E200_load_data(filename,experiment='E200',writefile=None,verbose=False):
-	if verbose: print 'Input is: filename={} experiment={}'.format(filename,experiment)
+	logger.log(level=loggerlevel,msg='Input is: filename={} experiment={}'.format(filename,experiment))
+
 	vfn = Filename(path=filename,experiment=experiment)
 	processed_path = vfn.processed_path
 
-	if verbose: print 'Processed file path is: processed_file_path={}'.format(processed_path)
+	logger.log(level=loggerlevel,msg='Processed file path is: processed_file_path={}'.format(processed_path))
 
 	if os.path.isfile(processed_path):
-		if verbose: print 'Found processed file'
+		logger.log(level=loggerlevel,msg='Found processed file')
 	else:
-		if verbose: print 'Processed file not found, calling matlab to process file.'
+		logger.log(level=loggerlevel,msg='Processed file not found, calling matlab to process file.')
 		pwd = os.getcwdu()
 		matlab = '/Applications/MATLAB_R2014a.app/bin/matlab -nojvm -nodisplay -nosplash'
 		command = '{} -r "addpath(\'~/SDDSTOOLS/mytools/E200/\'); cd(\'{}\'); convert_mat_file(\'{}\'); exit;"'.format(matlab,pwd,filename)
@@ -41,14 +45,15 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False):
 		subprocess.call(shlex.split(command))
 
 	if os.path.isfile(processed_path):
-		if verbose: print 'Loading processed file'
+		logger.log(level=loggerlevel,msg='Loading processed file')
 		f = _h5.File(processed_path,'r',driver='core',backing_store=False)
 	else:
 		raise IOError('Final error: Could not find processed file')
 
 	if writefile==None:
 		writefile = vfn.py_processed_path
-	if verbose: print 'Creating file for writing: {}'.format(writefile)
+		#  logger.log(level=loggerlevel,msg='Creating file for writing: {}'.format(writefile))
+
 	if os.path.exists(writefile):
 		title = 'File already exists'
 		maintext = 'WARNING: File already exists!'
@@ -73,6 +78,7 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False):
 		else:
 			raise LookupError('Didn''t detect button')
 	else:
+		logger.log(level=loggerlevel,msg='Opening file for writing: {}'.format(writefile))
 		wf = _h5.File(writefile,'w')
 		_load_data(wf)
 

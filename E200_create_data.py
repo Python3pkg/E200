@@ -2,13 +2,17 @@ import h5py as h5
 import warnings
 import numpy as _np
 
+import logging
+logger = logging.getLogger(__name__)
+loggerlevel = 9
+
 __all__ = ['E200_create_data']
 def E200_create_data(group_parent,group_name):
 	# ======================================
 	# Check if group name already exists
 	# ======================================
 	if group_name in group_parent.keys():
-		warnings.warn('Data with name "{}" already exists.'.format(group_name))
+		logger.log(level=loggerlevel,msg='Data with name "{}" already exists.'.format(group_name))
 		return group_parent[group_name]
 
 	# ======================================

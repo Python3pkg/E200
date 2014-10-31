@@ -8,8 +8,12 @@ import scipy.io as _spio
 from get_remoteprefix import get_remoteprefix
 import os
 from classes import *
+import logging
+loggerlevel = logging.DEBUG
+logger=logging.getLogger(__name__)
 
 def E200_load_images(imgstr,UID=None):
+	logger.log(level=loggerlevel,msg='Loading images...')
 	try:
 		remote_bool = imgstr.file['data']['VersionInfo']['remotefiles']['dat'][0,0]
 	except:
@@ -23,6 +27,8 @@ def E200_load_images(imgstr,UID=None):
 
 	imgs = [_plt.imread(os.path.join(prefix,val[0:])) for val in imgdat.dat]
 	imgs = _np.float64(imgs)
+
+	logger.log(level=loggerlevel,msg='Loading backgrounds...')
 
 	imgbgdat = E200_api_getdat(imgstr,fieldname='background_dat',UID=imgdat.uid)
 

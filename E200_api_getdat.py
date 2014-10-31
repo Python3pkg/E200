@@ -3,8 +3,12 @@ import pdb as _pdb
 from classes import *
 import pdb
 import h5py as h5
+import logging
+logger = logging.getLogger(__name__)
 
 def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
+	logger.log(level=10,msg='==============================')
+	logger.debug('Accessing: {}'.format(dataset.name))
 	# ======================================
 	# Check version
 	# ======================================
@@ -13,7 +17,7 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 		python_version_bool = (dataset.file.attrs['origin']=='python-h5py')
 	else:
 		python_version_bool = False
-	if verbose: print 'Matlab version: {}'.format(not python_version_bool)
+	logger.debug('Matlab version: {}'.format(not python_version_bool))
 
 	# ======================================
 	# Get available UIDs in dataset
@@ -50,8 +54,15 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 		else:
 			vals = [val[0] for val in vals]
 			vals = _np.array(vals)
-
-	if _np.size(avail_uids)==1:
+	avail_uids_num=_np.size(avail_uids)
+	logger.debug('Number of available uids: {}'.format(avail_uids_num))
+	if (UID is None):
+		# ======================================
+		# Return all results if no UID requested
+		# ======================================
+		out_uids = avail_uids
+		out_vals = vals
+	elif avail_uids_num==1:
 		# ======================================
 		# Match UIDs
 		# ======================================
@@ -61,12 +72,6 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 		else:
 			out_uids=_np.array([])
 			out_vals=_np.array([])
-	elif (UID is None):
-		# ======================================
-		# Return all results if no UID requested
-		# ======================================
-		out_uids = avail_uids
-		out_vals = vals
 	else:
 		# ======================================
 		# Match UIDs
@@ -76,8 +81,6 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 
 		out_uids = avail_uids[valbool]
 
-	if verbose:
-		total = _np.size(out_uids)
-		print 'Number of UIDs found: {}'.format(total)
+	logger.debug('Number of UIDs found: {}'.format(_np.size(out_uids)))
 
 	return E200_Dat(out_vals,out_uids,field=fieldname)

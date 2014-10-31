@@ -104,7 +104,6 @@ def eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,img=None):
 	# 	out[i]=outval.x[0]
 	#
 	out=E_no_eta(y,ypinch,res,Ldrift,Lmag,E0,theta)
-	# print out
 	return out
 
 # def merit_fcn(E,ypx,ypinch,res,E0,theta,Ldrift,Lmag,eta0=np.float64(0),etap0=np.float64(0)):

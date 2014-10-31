@@ -1,15 +1,20 @@
-import numpy as _np
-import os.path as _path
+import logging
+loggerlevel = 9
+logger=logging.getLogger(__name__)
+
+from PyQt4 import QtGui as _QtGui
 from get_remoteprefix import *
+from glob import glob as _glob
 import mytools as _mt
 import mytools.qt as _mtqt
-from PyQt4 import QtGui as _QtGui
-from glob import glob as _glob
+import numpy as _np
+import os.path as _path
 import re as _re
 import warnings as _warnings
 
 class Filename(object):
 	def __init__(self,path,experiment='E200'):
+		logger.log(level=loggerlevel,msg='Entering Filename class')
 		self.experiment = experiment
 		self.pathstr = path
 
@@ -75,11 +80,11 @@ class Filename(object):
 def get_valid_filename(pathstr,experiment,verbose=False):
 	# File doesn't exist
 	# This case must terminate in us trying again.
-	if verbose:
-		print 'Input is: pathstr={}, experiment={}'.format(pathstr,experiment)
+	logger.log(level=loggerlevel,msg='Input is: pathstr={}, experiment={}'.format(pathstr,experiment))
+
 	if not _path.exists(pathstr):
-		if verbose:
-			print 'Path does not exist'
+
+		logger.log(level=loggerlevel,msg='Path does not exist: {}'.format(pathstr))
 		# If file didn't exist, maybe it needs a prefix
 		# Append prefix
 		prefix = get_remoteprefix()
@@ -91,8 +96,8 @@ def get_valid_filename(pathstr,experiment,verbose=False):
 		# or the drive might not have been mounted and we can mount and
 		# try again.
 		if not _path.exists(pathstr):
-			if verbose:
-				print 'Adding prefix didn''t help, new pathstr={}'.format(pathstr)
+			logger.log(level=loggerlevel,msg='Adding prefix didn''t help, new pathstr={}'.format(pathstr))
+
 			title = 'File not found!'
 			maintext='File doesn''t exist:\n\n{}'.format(pathstr)
 			subtext='(External drive may not be mounted.)'
@@ -108,14 +113,15 @@ def get_valid_filename(pathstr,experiment,verbose=False):
 
 			# Change prefix
 			if clicked[0]:
-				if verbose:
-					print 'Trying again'
+				logger.log(level=loggerlevel,msg='Trying again')
 			elif clicked[1]:
-				if verbose: print 'Changing prefix'
+				logger.log(level=loggerlevel,msg='Changing prefix')
+
 				prefix = _mt.E200.choose_remoteprefix(pathstart=prefix)
 			# Locate file
 			elif clicked[2]:
-				if verbose: print 'Locating file'
+				logger.log(level=loggerlevel,msg='Locating file')
+
 				# Try to open the path by chopping of the end
 				while not _path.isdir(pathstr):
 					lastpath=pathstr
@@ -126,26 +132,31 @@ def get_valid_filename(pathstr,experiment,verbose=False):
 						break
 				pathstr = _mtqt.getOpenFileName(directory=pathstr,caption='Locate file',filter='Matlab Files (*.mat)')
 			elif clicked[3]:
-				if verbose: print 'Aborting'
+				logger.log(level=loggerlevel,msg='Aborting')
+
 				raise IOError('Aborting')
 			else:
 				print 'Thar be dragons!'
-		if verbose: print 'Trying new pathstr={}'.format(pathstr)
+		logger.log(level=loggerlevel,msg='Trying new pathstr={}'.format(pathstr))
+
 		return get_valid_filename(pathstr,experiment)
 	elif _path.isdir(pathstr):
-		if verbose: print 'Path is a directory'
+		logger.log(level=loggerlevel,msg='Path is a directory')
+
 		patterns=['*scan_info.mat','*filenames.mat','{}_*.mat'.format(experiment)]
 		files = _np.array([])
 		for i,val in enumerate(patterns):
 			gfiles = _glob(_path.join(pathstr,val))
 			files = _np.append(files,gfiles)
-		if verbose: print 'Files match patterns\npatterns: {}\nfiles: {}'.format(patterns,files)
+		logger.log(level=loggerlevel,msg='Files match patterns\npatterns: {}\nfiles: {}'.format(patterns,files))
 
 		if files.size == 1:
-			if verbose: print 'Found one file.'
+			logger.log(level=loggerlevel,msg='Found one file.')
+
 			pathstr=files[0]
 		elif files.size == 0:
-			if verbose: print 'Found no files.'
+			logger.log(level=loggerlevel,msg='Found no files.')
+
 			title = 'File Not Found'
 			maintext = 'No valid file found in folder.'
 			subtext = 'Locate manually?'
@@ -157,16 +168,20 @@ def get_valid_filename(pathstr,experiment,verbose=False):
 			clicked=buttonbox.clickedArray
 
 			if clicked[0]:
-				if verbose: print 'Trying to locate manually.'
+				logger.log(level=loggerlevel,msg='Trying to locate manually.')
+
 				pathstr = _mtqt.getOpenFileName(directory=pathstr,caption='Locate file',filter='Matlab Files (*.mat)')
 			elif clicked[1]:
-				if verbose: print 'Aborting.'
+				logger.log(level=loggerlevel,msg='Aborting.')
+
 				raise IOError('Aborting')
-		if verbose: print 'Trying new pathstr={}'.format(pathstr)
+		logger.log(level=loggerlevel,msg='Trying new pathstr={}'.format(pathstr))
+
 		return get_valid_filename(pathstr,experiment)
 
 	elif _path.isfile(pathstr):
-		if verbose: print 'Path is a file.'
+		logger.log(level=loggerlevel,msg='Path is a file.')
+
 		# Check for string endings
 		strends = _np.array(['scan_info.mat$','filenames.mat$','{}_[0-9]*\.mat'.format(experiment)])
 		strmatch = _np.empty(strends.size,dtype=object)
@@ -178,14 +193,15 @@ def get_valid_filename(pathstr,experiment,verbose=False):
 
 		# Warn if there are no matches
 		if not _np.any(strmatch_bool):
-			if verbose: print 'File doesn''t match patterns={}'.format(strends)
+			logger.log(level=loggerlevel,msg='File doesn''t match patterns={}'.format(strends))
+
 			_warnings.warn('Neither a 2014+ data file, scan_info.mat file, nor a filenames.mat file: {}'.format(pathstr))
 
 		if strmatch_bool[2]:
 			data_source_type='2014'
 		else:
 			data_source_type='2013'
-		if verbose: print 'data_source_type is {}'.format(data_source_type)
+		logger.log(level=loggerlevel,msg='data_source_type is {}'.format(data_source_type))
 
 		# Check that this is a data file
 		# Must have /nas/nas-li20-pm01
@@ -201,5 +217,6 @@ def get_valid_filename(pathstr,experiment,verbose=False):
 		dir_mid = dirstr[match.start()+1:]
 
 		output = (dir_beg,dir_mid,filename,data_source_type)
-		if verbose: print 'Output is: {}'.format(output)
+		logger.log(level=loggerlevel,msg='Output is: {}'.format(output))
+
 		return output

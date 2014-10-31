@@ -2,9 +2,11 @@ import numpy as _np
 import h5py as _h5
 import uuid as _uuid
 import warnings
+
 import logging
 logger = logging.getLogger(__name__)
-#  print 'E200_api_updateUID.py name is {}'.format(__name__)
+#  loggerlevel = logging.DEBUG
+loggerlevel = 9
 
 def E200_api_updateUID(group,UID,value,verbose=False):
 	if _np.size(UID)>1:
@@ -39,19 +41,13 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 		uids      = uid_dset.value
 		dat_refs  = dat_dset.value
 	
-		logger.debug('Adding UID: {}, value: {}'.format(UID,value))
-		logger.debug('UID type is: {}'.format(type(UID)))
+		logger.log(level=loggerlevel,msg='UID to update: {}, value: {}'.format(UID,value))
 	
 		# ======================================
 		# Validate it's a numpy array
 		# ======================================
 		value = _np.array(value)
 		
-		# Verify vector
-		# ndim = _np.ndim(value)
-		# if ndim != 2:
-		#         raise ValueError('Wrong dimensions for an array: {} dimensions'.format(ndim))
-	
 		# ======================================
 		# Find matches
 		# ======================================
@@ -63,6 +59,8 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 			# ======================================
 			# Add new UID and value
 			# ======================================
+                        logger.log(level=loggerlevel,msg='Adding new UID...')
+
 			uuid_val = str(_uuid.uuid1())
 			uuid_ref = refs_dset.create_dataset(name=uuid_val,data=value)
 	
@@ -78,6 +76,7 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 			# ======================================
 			# Delete old UID dataset
 			# ======================================
+                        logger.log(level=loggerlevel,msg='Replacing existing UID...')
 			ind = uid_match_inds[0]
 			ref = dat_dset.value[ind]
 			ref_name = group.file[ref].name
@@ -101,7 +100,7 @@ def E200_api_updateUID(group,UID,value,verbose=False):
 				# ======================================
 				raise LookupError('Multiple unique IDs exist. ({} uids with values: {})'.format(uid_match_total,uids[uid_match]))
 	
-			# ======================================
-			# Write changes to file
-			# ======================================
+		# ======================================
+		# Write changes to file
+		# ======================================
 		group.file.flush()
