@@ -1,8 +1,8 @@
 import numpy as _np
 class E200_Dat(object):
 	def __init__(self,dat,uid,field):
-		self._dat = dat
-		self._uid = _np.int64(uid)
+		self._dat = _np.array([dat]).flatten()
+		self._uid = _np.int64([uid]).flatten()
 		self._field = field
 
 	def _get_dat(self):

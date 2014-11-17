@@ -1,10 +1,10 @@
 import numpy as _np
 import pdb as _pdb
 from classes import *
-import pdb
 import h5py as h5
 import logging
 logger = logging.getLogger(__name__)
+
 
 def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 	logger.log(level=10,msg='==============================')
@@ -67,8 +67,9 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 		# Match UIDs
 		# ======================================
 		if avail_uids==UID:
+			logger.debug('Not empty')
 			out_uids=_np.array([avail_uids])
-			out_vals=_np.array([vals])
+			out_vals=_np.array([vals]).flatten()
 		else:
 			out_uids=_np.array([])
 			out_vals=_np.array([])
@@ -81,6 +82,24 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 
 		out_uids = avail_uids[valbool]
 
-	logger.debug('Number of UIDs found: {}'.format(_np.size(out_uids)))
+	# ======================================
+	# Sort UIDs
+	# ======================================
+	ind_sort = _np.argsort(out_uids.flatten())
+	out_uids  = out_uids[ind_sort]
+	out_vals = out_vals[ind_sort]
+
+	n_uids = _np.size(out_uids)
+	logger.debug('Number of UIDs found: {}'.format(n_uids))
+	#  _pdb.set_trace()
+	if n_uids > 10:
+		logger.debug('Showing only first 10 UIDs')
+		show_uids = out_uids[0:10]
+	else:
+		show_uids = out_uids
+
+	for uid in show_uids:
+		logger.debug('UID: {:d}'.format(_np.int64(uid)))
+	#  out_uids = _np.array([out_uids]).flatten()
 
 	return E200_Dat(out_vals,out_uids,field=fieldname)
