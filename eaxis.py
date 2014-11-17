@@ -1,5 +1,4 @@
-#!/bin/env python
-
+import E200
 import numpy as np
 import scipy.io as sio
 import scipy.optimize as spopt
@@ -8,13 +7,43 @@ import mytools as mt
 import copy
 __all__ = ['eaxis', 'eaxis_ELANEX', 'yaxis_ELANEX', 'yanalytic', 'E_no_eta', 'y_no_eta']
 
-def eaxis(camname, *args, **kwargs):
-	if camname=='CMOS_FAR':
-		# return eaxis = eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None)
-		ymotor=kwargs.pop('ymotor')
-		return eaxis_CMOS_far(*args,**kwargs)
-	elif camname=='ELANEX':
-		return eaxis_ELANEX(*args,**kwargs)
+import logging
+loggerlevel = logging.DEBUG
+logger=logging.getLogger(__name__)
+
+def eaxis(y, uid, camname, hdf5_data, E0=20.35, etay=0, etapy=0):
+	logger.log(level=loggerlevel,msg='Getting energy axis...')
+
+	# eaxis     = E200.eaxis(camname=camname,y=y,res=res,E0=20.35,etay=0,etapy=0,ymotor=ymotor)
+	imgstr = hdf5_data['raw']['images'][str(camname)]
+	res    = imgstr['RESOLUTION'][0,0]
+	res    = res*1.0e-6
+
+	logger.log(level=loggerlevel,msg='Camera detected: {}'.format(camname))
+	if camname=='ELANEX':
+		ymotor = hdf5_data['raw']['scalars']['XPS_LI20_DWFA_M5']['dat']
+		ymotor = mt.derefdataset(ymotor,hdf5_data.file)
+		ymotor = ymotor[0]*1e-3
+		logger.log(level=loggerlevel,msg='Original ymotor is: {}'.format(ymotor))
+
+		raw_rf     = hdf5_data['raw']
+		scalars_rf = raw_rf['scalars']
+		setQS_str  = scalars_rf['step_value']
+		setQS_dat  = E200.E200_api_getdat(setQS_str,uid).dat[0]
+		setQS = mt.hardcode.setQS(setQS_dat)
+		logger.log(level=loggerlevel,msg='Eaxis''s setQS is: {}'.format(setQS_dat))
+		ymotor=setQS.elanex_y_motor()*1e-3
+		logger.log(level=loggerlevel,msg='Reconstructed ymotor is: {ymotor}'.format(ymotor=ymotor))
+
+		return eaxis_ELANEX(y=y,res=res,E0=E0,etay=etay,etapy=etapy,ymotor=ymotor)
+
+	elif camname=='CMOS_FAR':
+		return eaxis_CMOS_far(y=y,res=res,E0=E0,etay=etay,etapy=etapy)
+
+	else:
+		msg = 'No energy axis available for camera: {}'.format(camname)
+		logger.log(level=loggerlevel,msg=msg)
+		raise NotImplementedError(msg)
 
 def eaxis_ELANEX(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
 	ymotor=np.float64(ymotor)
