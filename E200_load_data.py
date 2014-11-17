@@ -26,7 +26,7 @@ class Data(object):
 		self.read_file.close()
 		self.write_file.close()
 
-def E200_load_data(filename,experiment='E200',writefile=None,verbose=False):
+def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,readonly=False):
 	logger.log(level=loggerlevel,msg='Input is: filename={} experiment={}'.format(filename,experiment))
 
 	vfn = Filename(path=filename,experiment=experiment)
@@ -55,28 +55,32 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False):
 		#  logger.log(level=loggerlevel,msg='Creating file for writing: {}'.format(writefile))
 
 	if os.path.exists(writefile):
-		title = 'File already exists'
-		maintext = 'WARNING: File already exists!'
-		infotext = 'Overwrite file: {}?'.format(writefile)
-		buttons = np.array([
-			mtqt.Button('Overwrite',QtGui.QMessageBox.AcceptRole),
-			mtqt.Button(QtGui.QMessageBox.Abort,escape=True),
-			mtqt.Button('Load file',default=True)
-			])
-		buttonbox = mtqt.ButtonMsg(title=title,maintext=maintext,infotext=infotext,buttons=buttons)
-		clicked = buttonbox.clickedArray
-
-		if clicked[0]:
-			warn('Overwriting file: {}'.format(writefile),UserWarning,stacklevel=2)
-			wf = _h5.File(writefile,'w')
-			_load_data(wf)
-		elif clicked[1]:
-			raise IOError('No valid directory chosen.')
-		elif clicked[2]:
-			warn('Reading file: {}'.format(writefile),UserWarning,stacklevel=2)
+		if readonly:
+			logger.log(level=loggerlevel,msg='Reading file: {}'.format(writefile))
 			wf = _h5.File(writefile,'r+')
 		else:
-			raise LookupError('Didn''t detect button')
+			title = 'File already exists'
+			maintext = 'WARNING: File already exists!'
+			infotext = 'Overwrite file: {}?'.format(writefile)
+			buttons = np.array([
+				mtqt.Button('Overwrite',QtGui.QMessageBox.AcceptRole),
+				mtqt.Button(QtGui.QMessageBox.Abort,escape=True),
+				mtqt.Button('Load file',default=True)
+				])
+			buttonbox = mtqt.ButtonMsg(title=title,maintext=maintext,infotext=infotext,buttons=buttons)
+			clicked = buttonbox.clickedArray
+
+			if clicked[0]:
+				warn('Overwriting file: {}'.format(writefile),UserWarning,stacklevel=2)
+				wf = _h5.File(writefile,'w')
+				_load_data(wf)
+			elif clicked[1]:
+				raise IOError('No valid directory chosen.')
+			elif clicked[2]:
+				logger.log(level=loggerlevel,msg='Reading file: {}'.format(writefile))
+				wf = _h5.File(writefile,'r+')
+			else:
+				raise LookupError('Didn''t detect button')
 	else:
 		logger.log(level=loggerlevel,msg='Opening file for writing: {}'.format(writefile))
 		wf = _h5.File(writefile,'w')
