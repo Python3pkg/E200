@@ -26,10 +26,13 @@ class Data(object):
 		self.read_file.close()
 		self.write_file.close()
 
-def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,readonly=False):
+def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,readonly=False,local=False):
 	logger.log(level=loggerlevel,msg='Input is: filename={} experiment={}'.format(filename,experiment))
 
-	vfn = Filename(path=filename,experiment=experiment)
+	# ======================================
+	# Get a verified filename
+	# ======================================
+	vfn = Filename(path=filename,experiment=experiment,local=local)
 	processed_path = vfn.processed_path
 
 	logger.log(level=loggerlevel,msg='Processed file path is: processed_file_path={}'.format(processed_path))
@@ -39,9 +42,11 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
 	else:
 		logger.log(level=loggerlevel,msg='Processed file not found, calling matlab to process file.')
 		pwd = os.getcwdu()
-		matlab = '/Applications/MATLAB_R2014a.app/bin/matlab -nojvm -nodisplay -nosplash'
-		command = '{} -r "addpath(\'~/SDDSTOOLS/mytools/E200/\'); cd(\'{}\'); convert_mat_file(\'{}\'); exit;"'.format(matlab,pwd,filename)
+		# matlab = '/Applications/MATLAB_R2014a.app/bin/matlab -nojvm -nodisplay -nosplash'
+		matlab = 'fmatlab -nodisplay -nosplash'
+		command = '{matlab} -r "addpath(\'/home/fphysics/joelfred/testbed/E200_DRT/E200_data/\',\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\');exit;"'.format(matlab=matlab,pwd=pwd,filename=filename)
 	
+		logger.log(level=loggerlevel,msg='Command given is: {}'.format(command))
 		subprocess.call(shlex.split(command))
 
 	if os.path.isfile(processed_path):

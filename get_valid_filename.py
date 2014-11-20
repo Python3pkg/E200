@@ -13,8 +13,9 @@ import re as _re
 import warnings as _warnings
 
 class Filename(object):
-	def __init__(self,path,experiment='E200'):
+	def __init__(self,path,experiment='E200',local=False):
 		logger.log(level=loggerlevel,msg='Entering Filename class')
+		self._local = local
 		self.experiment = experiment
 		self.pathstr = path
 
@@ -23,7 +24,7 @@ class Filename(object):
 		return self._pathstr
 	def _set_pathstr(self,value):
 		# Reprocess pathstr
-		out = get_valid_filename(value,self.experiment)
+		out = get_valid_filename(value,self.experiment,local=self._local)
 		self._dir_beg = out[0]
 		self._dir_mid = out[1]
 		self._filename = out[2]
@@ -53,7 +54,8 @@ class Filename(object):
 
 	def _get_processed_dir(self):
 		processed_dir = _path.join(self.dir_beg,self.dir_mid);
-		processed_dir = _re.sub('nas/nas-li20-pm0.','processed_data',processed_dir)
+		if not self._local:
+			processed_dir = _re.sub('nas/nas-li20-pm0.','processed_data',processed_dir)
 		return processed_dir
 	processed_dir = property(_get_processed_dir)
 	py_processed_dir = property(_get_processed_dir)
@@ -77,11 +79,28 @@ class Filename(object):
 	py_processed_path = property(_get_py_processed_path)
 
 # def [dir_beg, dir_mid, filename,varargout]=get_valid_filename(pathstr,varargin)
-def get_valid_filename(pathstr,experiment,verbose=False):
+def get_valid_filename(pathstr,experiment,verbose=False,local=False):
 	# File doesn't exist
 	# This case must terminate in us trying again.
 	logger.log(level=loggerlevel,msg='Input is: pathstr={}, experiment={}'.format(pathstr,experiment))
 
+	# ======================================
+	# Return info if the file is local
+	# ======================================
+	if local:
+		if not _path.exists(pathstr):
+			raise IOError('File not found: {}'.format(pathstr))
+		else:
+			dir_beg = ''
+			dir_mid = os.path.dirname(pathstr)
+			filename = os.path.basename(filename)
+			data_source_type = '2014'
+			output = (dir_beg,dir_mid,filename,data_source_type)
+			return output
+
+	# ======================================
+	# Return info if the file is a nas file
+	# ======================================
 	if not _path.exists(pathstr):
 
 		logger.log(level=loggerlevel,msg='Path does not exist: {}'.format(pathstr))
