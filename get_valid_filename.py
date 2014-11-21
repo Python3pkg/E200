@@ -91,9 +91,10 @@ def get_valid_filename(pathstr,experiment,verbose=False,local=False):
 		if not _path.exists(pathstr):
 			raise IOError('File not found: {}'.format(pathstr))
 		else:
+                        pathstr = _path.abspath(pathstr)
 			dir_beg = ''
-			dir_mid = os.path.dirname(pathstr)
-			filename = os.path.basename(filename)
+			dir_mid = _path.dirname(pathstr)
+			filename = _path.basename(pathstr)
 			data_source_type = '2014'
 			output = (dir_beg,dir_mid,filename,data_source_type)
 			return output

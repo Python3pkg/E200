@@ -26,7 +26,8 @@ def E200_load_images(imgstr,UID=None):
 	imgdat = E200_api_getdat(imgstr,UID=UID)
 
 	imgs = [_plt.imread(os.path.join(prefix,val[0:])) for val in imgdat.dat]
-	imgs = _np.float64(imgs)
+        for i,img in enumerate(imgs):
+	    imgs[i] = _np.float64(img)
 
 	logger.log(level=loggerlevel,msg='Loading backgrounds...')
 
@@ -38,9 +39,9 @@ def E200_load_images(imgstr,UID=None):
 		mat = _spio.loadmat(val)
 		imgbg = mat['img']
 		
-		if imgs[i,:,:].shape[0] == imgbg.shape[1]:
+		if imgs[i].shape[0] == imgbg.shape[1]:
 			imgbg = _np.transpose(imgbg)
 
-		imgs[i,:,:] = _np.fliplr(_np.abs(imgs[i,:,:]-_np.float64(imgbg)))
+		imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
 
 	return E200_Image(images=_np.array(imgs),dat=imgdat.dat,uid=imgdat.uid)

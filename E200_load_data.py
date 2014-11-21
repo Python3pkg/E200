@@ -32,7 +32,7 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
 	# ======================================
 	# Get a verified filename
 	# ======================================
-	vfn = Filename(path=filename,experiment=experiment,local=local)
+	vfn = Filename(path='temp.mat',experiment=experiment,local=local)
 	processed_path = vfn.processed_path
 
 	logger.log(level=loggerlevel,msg='Processed file path is: processed_file_path={}'.format(processed_path))
@@ -47,7 +47,7 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
 		command = '{matlab} -r "addpath(\'/home/fphysics/joelfred/testbed/E200_DRT/E200_data/\',\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\');exit;"'.format(matlab=matlab,pwd=pwd,filename=filename)
 	
 		logger.log(level=loggerlevel,msg='Command given is: {}'.format(command))
-		subprocess.call(shlex.split(command))
+                #  subprocess.call(shlex.split(command))
 
 	if os.path.isfile(processed_path):
 		logger.log(level=loggerlevel,msg='Loading processed file')
