@@ -32,7 +32,10 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
 	# ======================================
 	# Get a verified filename
 	# ======================================
-	vfn = Filename(path='temp.mat',experiment=experiment,local=local)
+	if local:
+		vfn = Filename(path='temp.mat',experiment=experiment,local=local)
+	else:
+		vfn = Filename(path=filename,experiment=experiment,local=local)
 	processed_path = vfn.processed_path
 
 	logger.log(level=loggerlevel,msg='Processed file path is: processed_file_path={}'.format(processed_path))

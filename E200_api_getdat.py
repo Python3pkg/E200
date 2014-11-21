@@ -99,7 +99,11 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 		show_uids = out_uids
 
 	for uid in show_uids:
-		logger.debug('UID: {:d}'.format(_np.int64(uid[0])))
+		try:
+			debug_uid = _np.int64(uid[0])
+		except IndexError:
+			debug_uid = _np.int64(uid)
+		logger.debug('UID: {:d}'.format(debug_uid))
 	#  out_uids = _np.array([out_uids]).flatten()
 
 	return E200_Dat(out_vals,out_uids,field=fieldname)
