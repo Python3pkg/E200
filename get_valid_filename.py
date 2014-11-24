@@ -89,15 +89,15 @@ def get_valid_filename(pathstr,experiment,verbose=False,local=False):
 	# ======================================
 	if local:
 		if not _path.exists(pathstr):
-			raise IOError('File not found: {}'.format(pathstr))
-		else:
-                        pathstr = _path.abspath(pathstr)
-			dir_beg = ''
-			dir_mid = _path.dirname(pathstr)
-			filename = _path.basename(pathstr)
-			data_source_type = '2014'
-			output = (dir_beg,dir_mid,filename,data_source_type)
-			return output
+			_warnings.warn('File not found: {}'.format(pathstr))
+			#  raise IOError('File not found: {}'.format(pathstr))
+		pathstr = _path.abspath(pathstr)
+		dir_beg = ''
+		dir_mid = _path.dirname(pathstr)
+		filename = _path.basename(pathstr)
+		data_source_type = '2014'
+		output = (dir_beg,dir_mid,filename,data_source_type)
+		return output
 
 	# ======================================
 	# Return info if the file is a nas file
