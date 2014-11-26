@@ -16,8 +16,8 @@ def eaxis(y, uid, camname, hdf5_data, E0=20.35, etay=0, etapy=0):
 
 	# eaxis     = E200.eaxis(camname=camname,y=y,res=res,E0=20.35,etay=0,etapy=0,ymotor=ymotor)
 	imgstr = hdf5_data['raw']['images'][str(camname)]
-	res    = imgstr['RESOLUTION'][0,0]
-	res    = res*1.0e-6
+	res    = np.float128(imgstr['RESOLUTION'][0,0])
+	res    = res*np.float128(1.0e-6)
 
 	logger.log(level=loggerlevel,msg='Camera detected: {}'.format(camname))
 	if camname=='ELANEX':
@@ -30,12 +30,14 @@ def eaxis(y, uid, camname, hdf5_data, E0=20.35, etay=0, etapy=0):
 		scalars_rf = raw_rf['scalars']
 		setQS_str  = scalars_rf['step_value']
 		setQS_dat  = E200.E200_api_getdat(setQS_str,uid).dat[0]
-		setQS = mt.hardcode.setQS(setQS_dat)
+		setQS      = mt.hardcode.setQS(setQS_dat)
+
 		logger.log(level=loggerlevel,msg='Eaxis''s setQS is: {}'.format(setQS_dat))
+		
 		ymotor=setQS.elanex_y_motor()*1e-3
 		logger.log(level=loggerlevel,msg='Reconstructed ymotor is: {ymotor}'.format(ymotor=ymotor))
 
-		return eaxis_ELANEX(y=y,res=res,E0=E0,etay=etay,etapy=etapy,ymotor=ymotor)
+		return eaxis_ELANEX(y=y,res=res,etay=etay,etapy=etapy,ymotor=ymotor)
 
 	elif camname=='CMOS_FAR':
 		return eaxis_CMOS_far(y=y,res=res,E0=E0,etay=etay,etapy=etapy)
@@ -45,20 +47,31 @@ def eaxis(y, uid, camname, hdf5_data, E0=20.35, etay=0, etapy=0):
 		logger.log(level=loggerlevel,msg=msg)
 		raise NotImplementedError(msg)
 
-def eaxis_ELANEX(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
-	ymotor=np.float64(ymotor)
-	ypinch = 130
-	# print ymotor
-	# print ymotor/res
-	y=y+ymotor/res
-	ypinch = 130 + (-1e-3)/(4.65e-6)
+def eaxis_ELANEX(y,res,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
+	ymotor = np.float128(ymotor)
+	y      = y+ymotor/res
+
+	#  y_motor_calibrated = np.float128(-1e-3)
+	#  y_pinch_calibrated = np.float128(130)
+	#  y_pixel_size       = np.float128(4.65e-6)
+	#  E0 = 20.35
+
+	y_motor_calibrated = np.float128(-0.00677574370709)
+	y_pinch_calibrated = np.float128(211)
+	y_pixel_size       = np.float128(8.9185e-6)
+	E0 = 23.737805394397343771
+
+	ypinch = y_pinch_calibrated + y_motor_calibrated/y_pixel_size
 
 	# E0=20.35 observed at 130px, motor position -1mm
-	E0=20.35
+	#  E0=20.35
 
-	theta = 6e-3
-	Lmag = 2*4.889500000E-01
-	Ldrift=8.792573
+	theta  = np.float128(6e-3)
+	Lmag   = np.float128(2*4.889500000E-01)
+	Ldrift = np.float128(8.792573)
+
+	logger.log(level=loggerlevel,msg='ypinch is: {}'.format(ypinch))
+	logger.log(level=loggerlevel,msg='ymotor is: {}'.format(ymotor))
 
 	out=E_no_eta(y,ypinch,res,Ldrift,Lmag,E0,theta)
 	return out
@@ -161,4 +174,20 @@ def y_no_eta(E,E0,theta,Ldrift,Lmag):
 def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta):
 	yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0=0,etap0=0) - ypinch*res
 	y = ypx*res + yoffset
-	return np.sqrt(np.power(Ldrift/y,2)+1)*E0*np.sin(theta)
+
+	if type(y) != np.ndarray:
+		y = np.array([y])
+
+	approx = E0*(np.float128(2)*Ldrift+Lmag)*theta / (np.float128(2)*y)
+	#  return approx
+
+	def merit(Eguess,yval):
+		yfromE = y_no_eta(Eguess,E0,theta,Ldrift,Lmag)
+		return np.power(yfromE-yval,2)
+	#  #
+	results = np.zeros(y.size,dtype=np.float128)
+	for i,yval in enumerate(y):
+		guess      = E0*(np.float128(2)*Ldrift+Lmag)*theta / (np.float128(2)*yval)
+		results[i] = spopt.fmin(merit,guess,args=(yval,),disp=False)
+	
+	return results,approx
