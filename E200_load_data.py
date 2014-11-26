@@ -1,3 +1,4 @@
+from classes import *
 import numpy as np
 import h5py as _h5
 import subprocess
@@ -14,17 +15,6 @@ logger=logging.getLogger(__name__)
 
 __all__ = ['Data','E200_load_data']
 
-class Data(object):
-	def __init__(self,read_file,write_file):
-		self.read_file=read_file
-		self.write_file=write_file
-
-		# self.data=datalevel()
-		# recursivePopulate(self._data,self)
-
-	def close(self):
-		self.read_file.close()
-		self.write_file.close()
 
 def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,readonly=False,local=False):
 	logger.log(level=loggerlevel,msg='Input is: filename={} experiment={}'.format(filename,experiment))
@@ -45,12 +35,12 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
 	else:
 		logger.log(level=loggerlevel,msg='Processed file not found, calling matlab to process file.')
 		pwd = os.getcwdu()
-		# matlab = '/Applications/MATLAB_R2014a.app/bin/matlab -nojvm -nodisplay -nosplash'
-		matlab = 'fmatlab -nodisplay -nosplash'
-		command = '{matlab} -r "addpath(\'/home/fphysics/joelfred/testbed/E200_DRT/E200_data/\',\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\');exit;"'.format(matlab=matlab,pwd=pwd,filename=filename)
+		matlab = '/Applications/MATLAB_R2014b.app/bin/matlab -nodisplay -nosplash'
+		#  matlab = 'fmatlab -nodisplay -nosplash'
+		command = '{matlab} -r "addpath(fullfile(getenv(\'HOME\'),\'testbed/E200_DRT/E200_data/\'),\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\');exit;"'.format(matlab=matlab,pwd=pwd,filename=filename)
 	
 		logger.log(level=loggerlevel,msg='Command given is: {}'.format(command))
-                #  subprocess.call(shlex.split(command))
+		subprocess.call(shlex.split(command))
 
 	if os.path.isfile(processed_path):
 		logger.log(level=loggerlevel,msg='Loading processed file')
