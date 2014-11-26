@@ -26,7 +26,7 @@ def E200_load_images(imgstr,UID=None):
 	imgdat = E200_api_getdat(imgstr,UID=UID)
 
 	imgs = [_plt.imread(os.path.join(prefix,val[0:])) for val in imgdat.dat]
-        for i,img in enumerate(imgs):
+	for i,img in enumerate(imgs):
 	    imgs[i] = _np.float64(img)
 
 	logger.log(level=loggerlevel,msg='Loading backgrounds...')
