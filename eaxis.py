@@ -190,8 +190,8 @@ def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
 		
 	elif dataset_num == 13448 or dataset_num == 13449:
 		y0    = np.float128(1605.5) - np.float128(0.7923)*(E0+QS)  # y0 is adjusted to account for QS dispersion.
-		#  eta_0 = np.float128(949.72) + np.float128(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
-		eta_0 = np.float128(59.5e-3) + np.float128(0.7923)*(E0+QS)
+		eta_0 = np.float128(949.72) + np.float128(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
+		#  eta_0 = np.float128(59.5e-3) + np.float128(0.7923)*(E0+QS)
 			
 	elif dataset_num == 13450:
 		y0    = np.float128(1655)   - np.float128(3.321)*(E0+QS) # y0 is adjusted to account for QS dispersion.
