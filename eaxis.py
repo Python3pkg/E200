@@ -61,7 +61,7 @@ def eaxis_ELANEX(y,res,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
 	y_pixel_size       = np.float128(8.9185e-6)
 	E0 = 23.737805394397343771
 
-	ypinch = y_pinch_calibrated + y_motor_calibrated/y_pixel_size
+	# ypinch = y_pinch_calibrated + y_motor_calibrated/y_pixel_size
 
 	# E0=20.35 observed at 130px, motor position -1mm
 	#  E0=20.35
@@ -168,18 +168,63 @@ def yanalytic(E,E0,theta,Ldrift,Lmag,eta0,etap0):
 def y_no_eta(E,E0,theta,Ldrift,Lmag):
 	return Ldrift/np.sqrt(np.power(E/(E0*np.sin(theta)),2)-1) + (E*Lmag)/(E0*np.sin(theta)) * (1 - np.sqrt(1-np.power(E0*np.sin(theta)/E,2)))
 
+
 # def my_E_no_eta(y,E0,theta,Ldrift,Lmag):
 	
 
-def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta):
+def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
+	# Determine pinch location
+	ypinch = y_pinch_calibrated + y_motor_calibrated/y_pixel_size
+	#  E0 = 23.737805394397343771
+	E0 = 20.35
+
 	yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0=0,etap0=0) - ypinch*res
 	y = ypx*res + yoffset
 
 	if type(y) != np.ndarray:
 		y = np.array([y])
 
-	approx = E0*(np.float128(2)*Ldrift+Lmag)*theta / (np.float128(2)*y)
-	#  return approx
+	eta_0_meters = None
+	if dataset_num == 13437 or dataset_num == 13438:
+		y0    = np.float128(1589)   # pixel position of E0 (20.35 GeV).
+		eta_0 = np.float128(949.72) # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
+		
+	elif dataset_num == 13448 or dataset_num == 13449:
+		y0    = np.float128(1605.5) - np.float128(0.7923)*(E0+QS)  # y0 is adjusted to account for QS dispersion.
+		#  eta_0 = np.float128(949.72) + np.float128(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
+		eta_0 = np.float128(59.5e-3) + np.float128(0.7923)*(E0+QS)
+			
+	elif dataset_num == 13450:
+		y0    = np.float128(1655)   - np.float128(3.321)*(E0+QS) # y0 is adjusted to account for QS dispersion.
+		eta_0 = np.float128(949.72) + np.float128(3.321)*(E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
+		
+	elif dataset_num == 13537:
+		y0    = np.float128(1576)   + np.float(0.5193)*(20.35+QS) # y0 is adjusted to account for QS dispersion.
+		eta_0 = np.float128(949.72) - np.float(0.5193)*(20.35+QS) # added QS dispersion of -0.5193 pix per QS GeV.
+	else:
+		y_0   = np.float128(1589)
+		eta_0_meters = (Ldrift+Lmag/np.float128(2))*theta
+
+	# ===========================
+	# Sebastien's code
+	# ===========================
+	z_B5D36    = np.float128(2005.65085 ) # middle of dipole magnet
+	z_ELANEX   = np.float128(2015.22    ) # linac z location of ELANEX phosphor screen in meter
+	z_CFAR     = np.float128(2016.04    ) # linac z location of Cherenkov Far gap in meter
+	cal_ELANEX = np.float128(8.9185     ) # ELANEX camera calibration in um/pixel
+	cal_CFAR   = np.float128(62.65      ) # CMOS FAR camera calibration in um/pixel
+	# y0 = 259 (when QS=0) at ELANEX corresponds to y0 = 1589 on CMOS FAR.
+	y0    = np.float128(259) + (cal_CFAR/cal_ELANEX) * (y0-np.float128(1589))
+	ypinch = y_0
+
+	eta_0 = (cal_CFAR/cal_ELANEX) * (z_ELANEX-z_B5D36) / (z_CFAR-z_B5D36) * eta_0
+
+	if eta_0_meters is None:
+		eta_0_meters = eta_0*cal_CFAR*np.float128(1e-6)
+
+	logger.DEBUG('Dispersion is: {}'.format(eta_0_meters))
+
+	approx = E0*eta_0_meters / y
 
 	def merit(Eguess,yval):
 		yfromE = y_no_eta(Eguess,E0,theta,Ldrift,Lmag)
