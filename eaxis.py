@@ -170,11 +170,10 @@ def y_no_eta(E,E0,theta,Ldrift,Lmag):
 
 
 # def my_E_no_eta(y,E0,theta,Ldrift,Lmag):
-	
 
 def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
 	# Determine pinch location
-	ypinch = y_pinch_calibrated + y_motor_calibrated/y_pixel_size
+	#  ypinch = y_pinch_calibrated + y_motor_calibrated/y_pixel_size
 	#  E0 = 23.737805394397343771
 	E0 = 20.35
 
