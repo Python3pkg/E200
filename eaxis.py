@@ -16,8 +16,8 @@ def eaxis(y, uid, camname, hdf5_data, E0=20.35, etay=0, etapy=0):
 
     # eaxis     = E200.eaxis(camname=camname,y=y,res=res,E0=20.35,etay=0,etapy=0,ymotor=ymotor)
     imgstr = hdf5_data['raw']['images'][str(camname)]
-    res    = np.float128(imgstr['RESOLUTION'][0,0])
-    res    = res*np.float128(1.0e-6)
+    res    = np.float64(imgstr['RESOLUTION'][0,0])
+    res    = res*np.float64(1.0e-6)
 
     logger.log(level=loggerlevel,msg='Camera detected: {}'.format(camname))
     if camname=='ELANEX':
@@ -48,17 +48,17 @@ def eaxis(y, uid, camname, hdf5_data, E0=20.35, etay=0, etapy=0):
         raise NotImplementedError(msg)
 
 def eaxis_ELANEX(y,res,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
-    ymotor = np.float128(ymotor)
+    ymotor = np.float64(ymotor)
     y      = y+ymotor/res
 
-    #  y_motor_calibrated = np.float128(-1e-3)
-    #  y_pinch_calibrated = np.float128(130)
-    #  y_pixel_size       = np.float128(4.65e-6)
+    #  y_motor_calibrated = np.float64(-1e-3)
+    #  y_pinch_calibrated = np.float64(130)
+    #  y_pixel_size       = np.float64(4.65e-6)
     #  E0 = 20.35
 
-    #  y_motor_calibrated = np.float128(-0.00677574370709)
-    #  y_pinch_calibrated = np.float128(211)
-    #  y_pixel_size       = np.float128(8.9185e-6)
+    #  y_motor_calibrated = np.float64(-0.00677574370709)
+    #  y_pinch_calibrated = np.float64(211)
+    #  y_pixel_size       = np.float64(8.9185e-6)
     E0 = 23.737805394397343771
 
     # ypinch = y_pinch_calibrated + y_motor_calibrated/y_pixel_size
@@ -66,9 +66,9 @@ def eaxis_ELANEX(y,res,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
     # E0=20.35 observed at 130px, motor position -1mm
     #  E0=20.35
 
-    theta  = np.float128(6e-3)
-    Lmag   = np.float128(2*4.889500000E-01)
-    Ldrift = np.float128(8.792573)
+    theta  = np.float64(6e-3)
+    Lmag   = np.float64(2*4.889500000E-01)
+    Ldrift = np.float64(8.792573)
 
     logger.log(level=loggerlevel,msg='ypinch is: {}'.format(ypinch))
     logger.log(level=loggerlevel,msg='ymotor is: {}'.format(ymotor))
@@ -192,42 +192,42 @@ def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
 
     eta_0_meters = None
     if dataset_num == 13437 or dataset_num == 13438:
-        y0    = np.float128(1589)   # pixel position of E0 (20.35 GeV).
-        eta_0 = np.float128(949.72) # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
+        y0    = np.float64(1589)   # pixel position of E0 (20.35 GeV).
+        eta_0 = np.float64(949.72) # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
         
     elif dataset_num == 13448 or dataset_num == 13449:
-        y0    = np.float128(1605.5) - np.float128(0.7923)*(E0+QS)  # y0 is adjusted to account for QS dispersion.
-        eta_0 = np.float128(949.72) + np.float128(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
-        #  eta_0 = np.float128(59.5e-3) + np.float128(0.7923)*(E0+QS)
+        y0    = np.float64(1605.5) - np.float64(0.7923)*(E0+QS)  # y0 is adjusted to account for QS dispersion.
+        eta_0 = np.float64(949.72) + np.float64(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
+        #  eta_0 = np.float64(59.5e-3) + np.float64(0.7923)*(E0+QS)
             
     elif dataset_num == 13450:
-        y0    = np.float128(1655)   - np.float128(3.321)*(E0+QS) # y0 is adjusted to account for QS dispersion.
-        eta_0 = np.float128(949.72) + np.float128(3.321)*(E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
+        y0    = np.float64(1655)   - np.float64(3.321)*(E0+QS) # y0 is adjusted to account for QS dispersion.
+        eta_0 = np.float64(949.72) + np.float64(3.321)*(E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
         
     elif dataset_num == 13537:
-        y0    = np.float128(1576)   + np.float(0.5193)*(20.35+QS) # y0 is adjusted to account for QS dispersion.
-        eta_0 = np.float128(949.72) - np.float(0.5193)*(20.35+QS) # added QS dispersion of -0.5193 pix per QS GeV.
+        y0    = np.float64(1576)   + np.float(0.5193)*(20.35+QS) # y0 is adjusted to account for QS dispersion.
+        eta_0 = np.float64(949.72) - np.float(0.5193)*(20.35+QS) # added QS dispersion of -0.5193 pix per QS GeV.
     else:
-        y0   = np.float128(1589)
-        eta_0_meters = (Ldrift+Lmag/np.float128(2))*theta
+        y0   = np.float64(1589)
+        eta_0_meters = (Ldrift+Lmag/np.float64(2))*theta
 
 
     # ===========================
     # Sebastien's code
     # ===========================
-    z_B5D36    = np.float128(2005.65085 ) # middle of dipole magnet
-    z_ELANEX   = np.float128(2015.22    ) # linac z location of ELANEX phosphor screen in meter
-    z_CFAR     = np.float128(2016.04    ) # linac z location of Cherenkov Far gap in meter
-    cal_ELANEX = np.float128(8.9185     ) # ELANEX camera calibration in um/pixel
-    cal_CFAR   = np.float128(62.65      ) # CMOS FAR camera calibration in um/pixel
+    z_B5D36    = np.float64(2005.65085 ) # middle of dipole magnet
+    z_ELANEX   = np.float64(2015.22    ) # linac z location of ELANEX phosphor screen in meter
+    z_CFAR     = np.float64(2016.04    ) # linac z location of Cherenkov Far gap in meter
+    cal_ELANEX = np.float64(8.9185     ) # ELANEX camera calibration in um/pixel
+    cal_CFAR   = np.float64(62.65      ) # CMOS FAR camera calibration in um/pixel
     # y0 = 259 (when QS=0) at ELANEX corresponds to y0 = 1589 on CMOS FAR.
-    y0    = np.float128(259) + (cal_CFAR/cal_ELANEX) * (y0-np.float128(1589))
+    y0    = np.float64(259) + (cal_CFAR/cal_ELANEX) * (y0-np.float64(1589))
     ypinch = y0
 
     eta_0 = (cal_CFAR/cal_ELANEX) * (z_ELANEX-z_B5D36) / (z_CFAR-z_B5D36) * eta_0
 
     if eta_0_meters is None:
-        eta_0_meters = eta_0*cal_CFAR*np.float128(1e-6)
+        eta_0_meters = eta_0*cal_CFAR*np.float64(1e-6)
 
     logger.debug('Dispersion is: {}'.format(eta_0_meters))
 
@@ -237,9 +237,9 @@ def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
         yfromE = y_no_eta(Eguess,E0,theta,Ldrift,Lmag)
         return np.power(yfromE-yval,2)
     #  #
-    results = np.zeros(y.size,dtype=np.float128)
+    results = np.zeros(y.size,dtype=np.float64)
     for i,yval in enumerate(y):
-        guess      = E0*(np.float128(2)*Ldrift+Lmag)*theta / (np.float128(2)*yval)
+        guess      = E0*(np.float64(2)*Ldrift+Lmag)*theta / (np.float64(2)*yval)
         results[i] = spopt.fmin(merit,guess,args=(yval,),disp=False)
     
     return results,approx

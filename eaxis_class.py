@@ -55,8 +55,8 @@ class Energy_Axis(object):
     def _get_res(self):
         """Camera resolution"""
         imgstr = self._hdf5_data['raw']['images'][str(self.camname)]
-        res    = np.float128(imgstr['RESOLUTION'][0,0])
-        res    = res*np.float128(1.0e-6)
+        res    = np.float64(imgstr['RESOLUTION'][0,0])
+        res    = res*np.float64(1.0e-6)
         return res
     res = property(_get_res)
 
@@ -104,8 +104,8 @@ class Energy_Axis(object):
     # ===================================
     # Elements for calculating dispersion
     # ===================================
-    _theta  = np.float128(6e-3)
-    _Lmag   = np.float128(2*4.889500000E-01)
+    _theta  = np.float64(6e-3)
+    _Lmag   = np.float64(2*4.889500000E-01)
 
     # ===================================
     # Future-proofing, in case we want
@@ -122,9 +122,9 @@ class Energy_Axis(object):
     def _get_Ldrift(self):
         # Drift length depends on camera location
         if self.camname == 'ELANEX':
-            self._Ldrift = np.float128(8.792573)
+            self._Ldrift = np.float64(8.792573)
         elif self.camname == 'CMOS_FAR':
-            self._Ldrift = np.float128(8.792573) + 0.8198
+            self._Ldrift = np.float64(8.792573) + 0.8198
 
         return self._Ldrift
     Ldrift=property(_get_Ldrift)
@@ -141,26 +141,26 @@ class Energy_Axis(object):
 
         if self.dataset_num is None:
             logger.critical('No dataset_num detected')
-            self._ypinch = np.float128(1589)
-            self._eta0   = (self.Ldrift+self.Lmag/np.float128(2))*self.theta
+            self._ypinch = np.float64(1589)
+            self._eta0   = (self.Ldrift+self.Lmag/np.float64(2))*self.theta
 
         else:
             logger.debug('Dataset_num: {}'.format(self.dataset_num))
             if self.dataset_num == '13437' or self.dataset_num == '13438':
-                y0       = np.float128(1589)   # pixel position of E0 (20.35 GeV).
-                eta_0_px = np.float128(949.72) # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
+                y0       = np.float64(1589)   # pixel position of E0 (20.35 GeV).
+                eta_0_px = np.float64(949.72) # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
 
             elif self.dataset_num == '13448' or self.dataset_num == '13449':
-                y0       = np.float128(1605.5) - np.float128(0.7923)*(E0+QS)  # y0 is adjusted to account for QS dispersion.
-                eta_0_px = np.float128(949.72) + np.float128(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
+                y0       = np.float64(1605.5) - np.float64(0.7923)*(E0+QS)  # y0 is adjusted to account for QS dispersion.
+                eta_0_px = np.float64(949.72) + np.float64(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
 
             elif self.dataset_num == '13450':
-                y0       = np.float128(1655)   - np.float128(3.321)*(E0+QS) # y0 is adjusted to account for QS dispersion.
-                eta_0_px = np.float128(949.72) + np.float128(3.321)*(E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
+                y0       = np.float64(1655)   - np.float64(3.321)*(E0+QS) # y0 is adjusted to account for QS dispersion.
+                eta_0_px = np.float64(949.72) + np.float64(3.321)*(E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
 
             elif self.dataset_num == '13537':
-                y0       = np.float128(1576)   + np.float(0.5193)*(20.35+QS) # y0 is adjusted to account for QS dispersion.
-                eta_0_px = np.float128(949.72) - np.float(0.5193)*(20.35+QS) # added QS dispersion of -0.5193 pix per QS GeV.
+                y0       = np.float64(1576)   + np.float(0.5193)*(20.35+QS) # y0 is adjusted to account for QS dispersion.
+                eta_0_px = np.float64(949.72) - np.float(0.5193)*(20.35+QS) # added QS dispersion of -0.5193 pix per QS GeV.
             else:
                 raise ValueError('Dataset number does not exist: {}'.format(self.dataset_num))
 
@@ -168,23 +168,23 @@ class Energy_Axis(object):
                 # ===================================
                 # Sebastien's code
                 # ===================================
-                z_B5D36    = np.float128(2005.65085 ) # middle of dipole magnet
-                z_ELANEX   = np.float128(2015.22    ) # linac z location of ELANEX phosphor screen in meter
-                z_CFAR     = np.float128(2016.04    ) # linac z location of Cherenkov Far gap in meter
-                cal_ELANEX = np.float128(8.9185     ) # ELANEX camera calibration in um/pixel
-                cal_CFAR   = np.float128(62.65      ) # CMOS FAR camera calibration in um/pixel
+                z_B5D36    = np.float64(2005.65085 ) # middle of dipole magnet
+                z_ELANEX   = np.float64(2015.22    ) # linac z location of ELANEX phosphor screen in meter
+                z_CFAR     = np.float64(2016.04    ) # linac z location of Cherenkov Far gap in meter
+                cal_ELANEX = np.float64(8.9185     ) # ELANEX camera calibration in um/pixel
+                cal_CFAR   = np.float64(62.65      ) # CMOS FAR camera calibration in um/pixel
 
                 # y0 = 259 (when QS=0) at ELANEX corresponds to y0 = 1589 on CMOS FAR.
-                y0           = np.float128(259) + (cal_CFAR/cal_ELANEX) * (y0-np.float128(1589))
+                y0           = np.float64(259) + (cal_CFAR/cal_ELANEX) * (y0-np.float64(1589))
                 self._ypinch = y0
 
                 eta_0_px = (cal_CFAR/cal_ELANEX) * (z_ELANEX-z_B5D36) / (z_CFAR-z_B5D36) * eta_0_px
 
-                self._eta0 = eta_0_px * cal_ELANEX * np.float128(1e-6)
+                self._eta0 = eta_0_px * cal_ELANEX * np.float64(1e-6)
 
             elif self.camname == 'CMOS_FAR':
                 self._ypinch = y0
-                self._eta0  = eta_0_px * cal_CFAR * np.float128(1e-6)
+                self._eta0  = eta_0_px * cal_CFAR * np.float64(1e-6)
             else:
                 raise ValueError('Camera name not valid: {}'.format(self.camname))
 
