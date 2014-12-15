@@ -84,7 +84,7 @@ class Energy_Axis(object):
             scalars_rf = raw_rf['scalars']
             setQS_str  = scalars_rf['step_value']
             setQS_dat  = E200.E200_api_getdat(setQS_str,self._uid).dat[0]
-            setQS_dat=0
+            #  setQS_dat=0
             self._setQS      = mt.hardcode.setQS(setQS_dat)
 
             logger.log(level=loggerlevel,msg='Eaxis''s setQS is: {}'.format(setQS_dat))
@@ -218,5 +218,4 @@ class Energy_Axis(object):
         logger.log(level=loggerlevel,msg='Eta0 is: {}'.format(self.eta0))
 
         approx = self.eta0*self.E0 / y
-        pdb.set_trace()
         return approx
