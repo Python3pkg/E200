@@ -87,7 +87,6 @@ class E200_Dat(object):
 		return self._field
 	field=property(_get_field)
 
-
 class E200_Image(E200_Dat):
 	def __init__(self,images,dat,uid,image_backgrounds=None):
 		E200_Dat.__init__(self,dat,uid,field='dat')
