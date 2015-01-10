@@ -13,35 +13,35 @@ loggerlevel = logging.DEBUG
 logger=logging.getLogger(__name__)
 
 def E200_load_images(imgstr,UID=None):
-	logger.log(level=loggerlevel,msg='Loading images...')
-	try:
-		remote_bool = imgstr.file['data']['VersionInfo']['remotefiles']['dat'][0,0]
-	except:
-		remote_bool = True
-	if remote_bool:
-		prefix = get_remoteprefix()
-	else:
-		prefix = ''
+    logger.log(level=loggerlevel,msg='Loading images...')
+    try:
+        remote_bool = imgstr.file['data']['VersionInfo']['remotefiles']['dat'][0,0]
+    except:
+        remote_bool = True
+    if remote_bool:
+        prefix = get_remoteprefix()
+    else:
+        prefix = ''
 
-	imgdat = E200_api_getdat(imgstr,UID=UID)
+    imgdat = E200_api_getdat(imgstr,UID=UID)
 
-	imgs = [_plt.imread(os.path.join(prefix,val[0:])) for val in imgdat.dat]
-	for i,img in enumerate(imgs):
-	    imgs[i] = _np.float64(img)
+    imgs = [_plt.imread(os.path.join(prefix,val[0:])) for val in imgdat.dat]
+    for i,img in enumerate(imgs):
+        imgs[i] = _np.float64(img)
 
-	logger.log(level=loggerlevel,msg='Loading backgrounds...')
+    logger.log(level=loggerlevel,msg='Loading backgrounds...')
 
-	imgbgdat = E200_api_getdat(imgstr,fieldname='background_dat',UID=imgdat.uid)
+    imgbgdat = E200_api_getdat(imgstr,fieldname='background_dat',UID=imgdat.uid)
 
-	for i,val in enumerate(imgbgdat.dat):
-		# print val
-		val = os.path.join(prefix,val[0:])
-		mat = _spio.loadmat(val)
-		imgbg = mat['img']
-		
-		if imgs[i].shape[0] == imgbg.shape[1]:
-			imgbg = _np.transpose(imgbg)
+    for i,val in enumerate(imgbgdat.dat):
+        # print val
+        val = os.path.join(prefix,val[0:])
+        mat = _spio.loadmat(val)
+        imgbg = mat['img']
+        
+        if imgs[i].shape[0] == imgbg.shape[1]:
+            imgbg = _np.transpose(imgbg)
 
-		imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
+        imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
 
-	return E200_Image(images=_np.array(imgs),dat=imgdat.dat,uid=imgdat.uid)
+    return E200_Image(images=_np.array(imgs),dat=imgdat.dat,uid=imgdat.uid)

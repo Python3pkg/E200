@@ -181,14 +181,6 @@ def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
     #  E0 = 23.737805394397343771
     E0 = 20.35
 
-    yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0=0,etap0=0) - ypinch*res
-
-    y = ypx*res + yoffset
-
-
-    if type(y) != np.ndarray:
-        y = np.array([y])
-
 
     eta_0_meters = None
     if dataset_num == 13437 or dataset_num == 13438:
@@ -211,7 +203,6 @@ def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
         y0   = np.float64(1589)
         eta_0_meters = (Ldrift+Lmag/np.float64(2))*theta
 
-
     # ===========================
     # Sebastien's code
     # ===========================
@@ -223,6 +214,21 @@ def E_no_eta(ypx,ypinch,res,Ldrift,Lmag,E0,theta,dataset_num=None):
     # y0 = 259 (when QS=0) at ELANEX corresponds to y0 = 1589 on CMOS FAR.
     y0    = np.float64(259) + (cal_CFAR/cal_ELANEX) * (y0-np.float64(1589))
     ypinch = y0
+
+    # ===========================
+    # vvv Moved Code
+    # ===========================
+
+    yoffset=yanalytic(E0,E0,theta,Ldrift,Lmag,eta0=0,etap0=0) - ypinch*res
+
+    y = ypx*res + yoffset
+
+    if type(y) != np.ndarray:
+        y = np.array([y])
+
+    # ===========================
+    # ^^^^ Moved Code
+    # ===========================
 
     eta_0 = (cal_CFAR/cal_ELANEX) * (z_ELANEX-z_B5D36) / (z_CFAR-z_B5D36) * eta_0
 
