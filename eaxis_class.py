@@ -145,6 +145,9 @@ class Energy_Axis(object):
             self._eta0   = (self.Ldrift+self.Lmag/np.float64(2))*self.theta
 
         else:
+            QS = self.setQS.energy_offset
+            logger.debug('Energy offset: {}'.format(QS))
+
             logger.debug('Dataset_num: {}'.format(self.dataset_num))
             if self.dataset_num == '13437' or self.dataset_num == '13438':
                 y0       = np.float64(1589)   # pixel position of E0 (20.35 GeV).

@@ -1,5 +1,7 @@
 import numpy as _np
 import h5py as _h5
+from E200_api_getdat import E200_api_getdat
+from E200_Dat import *
 
 __all__ = ['Data','Drill','E200_Dat','E200_Image']
 
@@ -31,6 +33,12 @@ class Drill(object):
                     if out.shape[0] == 1 or out.shape[1] == 1:
                         out=out.value.flatten()
                     setattr(self,key,out)
+                elif key == 'UID':
+                    setattr(self,key,data[key].value)
+                elif key == 'dat':
+                    uids = data['UID'].value
+                    dats = E200_api_getdat(data,uids)
+                    setattr(self,key,dats.dat)
                 #  elif type(out) == _h5._hl.dataset.Dataset:
                 #          if 
                 #          if out[0][0]==_h5.h5r.Reference:
@@ -55,25 +63,6 @@ class Drill(object):
 
         out = out[1:] + '\n>'
         return out
-
-class E200_Dat(object):
-    def __init__(self,dat,uid,field):
-        self._dat = _np.array([dat]).flatten()
-        self._uid = _np.int64([uid]).flatten()
-        self._field = field
-
-    def _get_dat(self):
-        return self._dat
-    dat=property(_get_dat)
-
-    def _get_uid(self):
-        return self._uid
-    uid=property(_get_uid)
-    UID=property(_get_uid)
-
-    def _get_field(self):
-        return self._field
-    field=property(_get_field)
 
 class E200_Image(E200_Dat):
     def __init__(self,images,dat,uid,image_backgrounds=None):
