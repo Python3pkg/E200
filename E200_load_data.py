@@ -33,9 +33,15 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
 
     logger.log(level=loggerlevel,msg='Processed file path is: processed_file_path={}'.format(processed_path))
 
+    # ======================================
+    # Check for processed file
+    # ======================================
     if os.path.isfile(processed_path):
         logger.log(level=loggerlevel,msg='Found processed file')
     else:
+        # ======================================
+        # Have matlab process file
+        # ======================================
         logger.log(level=loggerlevel,msg='Processed file not found, calling matlab to process file.')
         pwd = os.getcwdu()
         matlab = '/Applications/MATLAB_R2014b.app/bin/matlab -nodisplay -nosplash'
@@ -45,16 +51,26 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
         logger.log(level=loggerlevel,msg='Command given is: {}'.format(command))
         subprocess.call(shlex.split(command))
 
+    # ======================================
+    # Load file processed by matlab
+    # ======================================
     if os.path.isfile(processed_path):
         logger.log(level=loggerlevel,msg='Loading processed file')
         f = _h5.File(processed_path,'r',driver='core',backing_store=False)
     else:
         raise IOError('Final error: Could not find processed file')
 
+    # ======================================
+    # Set location for python HDF5 writing
+    # ======================================
     if writefile==None:
         writefile = vfn.py_processed_path
         #  logger.log(level=loggerlevel,msg='Creating file for writing: {}'.format(writefile))
 
+    # ======================================
+    # Check in case location already exists
+    # (implies previously-loaded file)
+    # ======================================
     if os.path.exists(writefile):
         if readonly:
             logger.log(level=loggerlevel,msg='Reading file: {}'.format(writefile))
@@ -87,6 +103,9 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
         wf = _h5.File(writefile,'w')
         _load_data(wf)
 
+    # ======================================
+    # Add info about python HDF5 version
+    # ======================================
     wf.attrs['origin']  = 'python-h5py'
     wf.attrs['version'] = _h5.version.version
 
@@ -96,7 +115,11 @@ def E200_load_data(filename,experiment='E200',writefile=None,verbose=False,reado
     logger.log(level=loggerlevel,msg='Load request: {}'.format(loadreq))
     actualvfn = Filename(path=filename,experiment=experiment,local=False)
 
-    if loadreq == actualvfn.valid_path:
+    # ======================================
+    # Determine if the loaded file matches
+    # the requested file
+    # ======================================
+    if loadreq == filename:
         logger.log(level=loggerlevel,msg='Request matches loaded file, continuing...')
         return output
     else:
