@@ -154,12 +154,12 @@ class Energy_Axis(object):
                 eta_0_px = np.float64(949.72) # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
 
             elif self.dataset_num == '13448' or self.dataset_num == '13449':
-                y0       = np.float64(1605.5) - np.float64(0.7923)*(E0+QS)  # y0 is adjusted to account for QS dispersion.
-                eta_0_px = np.float64(949.72) + np.float64(0.7923)*(E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
+                y0       = np.float64(1605.5) - np.float64(0.7923)*(self.E0+QS)  # y0 is adjusted to account for QS dispersion.
+                eta_0_px = np.float64(949.72) + np.float64(0.7923)*(self.E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
 
             elif self.dataset_num == '13450':
-                y0       = np.float64(1655)   - np.float64(3.321)*(E0+QS) # y0 is adjusted to account for QS dispersion.
-                eta_0_px = np.float64(949.72) + np.float64(3.321)*(E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
+                y0       = np.float64(1655)   - np.float64(3.321)*(self.E0+QS) # y0 is adjusted to account for QS dispersion.
+                eta_0_px = np.float64(949.72) + np.float64(3.321)*(self.E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
 
             elif self.dataset_num == '13537':
                 y0       = np.float64(1576)   + np.float(0.5193)*(20.35+QS) # y0 is adjusted to account for QS dispersion.
