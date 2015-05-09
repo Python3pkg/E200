@@ -80,12 +80,12 @@ def yaxis_ELANEX(E,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=
     # y=0
     def merit_fcn(y,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=None):
         val = eaxis_ELANEX(y,res,E0,etay,etapy,ypinch,img,ymotor)
-        print '==========='
-        print y
-        print val
-        print E
+        print('===========')
+        print(y)
+        print(val)
+        print(E)
         out = (E-val)**2
-        print out
+        print(out)
         return out
 
     etay   = 0
@@ -97,10 +97,10 @@ def yaxis_ELANEX(E,res,E0=None,etay=None,etapy=None,ypinch=None,img=None,ymotor=
     # args = np.array([res,E0,etay,etapy,ypinch,img,ymotor])
     args = (res,E0,etay,etapy,ypinch,img,ymotor)
 
-    # print merit_fcn(0,res,E0,etay,etapy,ypinch,img,ymotor)
-    # print args
+    # print(merit_fcn(0,res,E0,etay,etapy,ypinch,img,ymotor))
+    # print(args)
     outval=spopt.minimize(merit_fcn,x0=np.array([-4000]),args=args,tol=1e-7)
-    print outval
+    print(outval)
     return outval.x[0]
 
 def eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,img=None):
@@ -119,12 +119,12 @@ def eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,img=None):
     if etay==None:
         etay = input('Dispersion in y in mm (eta_y)? ')
         etay = etay * 1e-3
-        print 'Dispersion entered is {}'.format(etay)
+        print('Dispersion entered is {}'.format(etay))
 
     if etapy==None:
         etapy = input('Dispersion-prime in y in mrad (eta''_y)? ')
         etapy = etapy * 1e-3
-        print 'Dispersion-prime entered is {}'.format(etapy)
+        print('Dispersion-prime entered is {}'.format(etapy))
 
     if img!=None:
         plt.imshow(img)
@@ -154,12 +154,12 @@ def eaxis_CMOS_far(y,res,E0=None,etay=None,etapy=None,img=None):
 #     y = ypx*res + yoffset
 #     yana = yanalytic(E,E0,theta,Ldrift,Lmag,eta0,etap0)
 # 
-#     # print '====================='
-#     # print E
-#     # print y
-#     # print yana
-#     # print np.power(y-yana,2)*1e14
-#     # print '====================='
+#     # print('=====================')
+#     # print(E)
+#     # print(y)
+#     # print(yana)
+#     # print(np.power(y-yana,2)*1e14)
+#     # print('=====================')
 #     return np.power(y-yana,2)*1e14
 
 def yanalytic(E,E0,theta,Ldrift,Lmag,eta0,etap0):

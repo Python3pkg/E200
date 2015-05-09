@@ -1,20 +1,24 @@
 import numpy as _np
-import pdb as _pdb
+import ipdb as _pdb
 #  from classes import *
 import h5py as h5
 import logging
 logger = logging.getLogger(__name__)
-from E200_Dat import *
+from .E200_Dat import *
 
-def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
-    logger.log(level=10,msg='==============================')
+
+def E200_api_getdat(dataset, UID=None, fieldname='dat', verbose=False):
+    if type(dataset) != h5.Group:
+            dataset = dataset._hdf5
+
+    logger.log(level=10, msg='==============================')
     logger.debug('Accessing: {}'.format(dataset.name))
     # ======================================
     # Check version
     # ======================================
     version_bool = 'origin' in dataset.file.attrs.keys()
     if version_bool:
-        python_version_bool = (dataset.file.attrs['origin']=='python-h5py')
+        python_version_bool = (dataset.file.attrs['origin'] == 'python-h5py')
     else:
         python_version_bool = False
     logger.debug('Matlab version: {}'.format(not python_version_bool))
@@ -30,9 +34,9 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
             # Build data from HDF5 refs
             # ======================================
             dat_refs = dataset['dat'].value
-            vals = _np.empty((avail_uids.shape[0],),dtype=_np.object)
+            vals = _np.empty((avail_uids.shape[0], ), dtype=_np.object)
 
-            for i,val in enumerate(dat_refs):
+            for i, val in enumerate(dat_refs):
                 vals[i] = dataset.file[val].value
 
         else:
@@ -43,18 +47,21 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
         # Deref if necessary
         # ======================================
         if type(dataset[fieldname][0][0]) == h5.h5r.Reference:
-            vals=[dataset.file[val[0]] for val in dataset[fieldname]]
+            vals = [dataset.file[val[0]] for val in dataset[fieldname]]
         else:
             vals = [val for val in dataset[fieldname]]
 
-        if vals[0].shape[0]>1:
+        if vals[0].shape[0] > 1:
             vals = [_np.array(val).flatten() for val in vals]
-            vals = [''.join(vec.view('S2')) for vec in vals]
+            # vals = [''.join(vec.view('S2')) for vec in vals]
+            vals = [[chr(vec) for vec in val] for val in vals]
+            vals = [''.join(val) for val in vals]
             vals = _np.array(vals)
         else:
             vals = [val[0] for val in vals]
             vals = _np.array(vals)
-    avail_uids_num=_np.size(avail_uids)
+
+    avail_uids_num = _np.size(avail_uids)
     logger.debug('Number of available uids: {}'.format(avail_uids_num))
     if (UID is None):
         # ======================================
@@ -62,22 +69,22 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
         # ======================================
         out_uids = avail_uids
         out_vals = vals
-    elif avail_uids_num==1:
+    elif avail_uids_num == 1:
         # ======================================
         # Match UIDs
         # ======================================
-        if avail_uids==UID:
+        if avail_uids == UID:
             logger.debug('Not empty')
-            out_uids=_np.array([avail_uids])
-            out_vals=_np.array([vals]).flatten()
+            out_uids = _np.array([avail_uids])
+            out_vals = _np.array([vals]).flatten()
         else:
-            out_uids=_np.array([])
-            out_vals=_np.array([])
+            out_uids = _np.array([])
+            out_vals = _np.array([])
     else:
         # ======================================
         # Match UIDs
         # ======================================
-        valbool  = _np.in1d(avail_uids,UID)
+        valbool  = _np.in1d(avail_uids, UID)
         out_vals = vals[valbool]
 
         out_uids = avail_uids[valbool]
@@ -91,7 +98,7 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
 
     n_uids = _np.size(out_uids)
     logger.debug('Number of UIDs found: {}'.format(n_uids))
-    #  _pdb.set_trace()
+
     if n_uids > 10:
         logger.debug('Showing only first 10 UIDs')
         show_uids = out_uids[0:10]
@@ -106,4 +113,4 @@ def E200_api_getdat(dataset,UID=None,fieldname='dat',verbose=False):
         logger.debug('UID: {:d}'.format(debug_uid))
     #  out_uids = _np.array([out_uids]).flatten()
 
-    return E200_Dat(out_vals,out_uids,field=fieldname)
+    return E200_Dat(out_vals, out_uids, field=fieldname)

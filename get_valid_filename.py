@@ -4,7 +4,7 @@ loggerlevel = logging.DEBUG
 logger=logging.getLogger(__name__)
 
 from PyQt4 import QtGui as _QtGui
-from get_remoteprefix import *
+from .get_remoteprefix import *
 from glob import glob as _glob
 import mytools as _mt
 import mytools.qt as _mtqt
@@ -13,24 +13,30 @@ import os.path as _path
 import re as _re
 import warnings as _warnings
 
+
 class Filename(object):
-    def __init__(self,path,experiment='E200',local=False):
+    def __init__(self,path,local=False):
         logger.log(level=loggerlevel,msg='Entering Filename class')
         self._local = local
-        self.experiment = experiment
         self.pathstr = path
+
+    @property
+    def experiment(self):
+        match = _re.search('(?<=/)E\d{3}(?=/)', self.pathstr)
+        experiment = match.group()
+        return experiment
 
     # Return pathstr and set pathstr
     def _get_pathstr(self):
         return self._pathstr
     def _set_pathstr(self,value):
         # Reprocess pathstr
-        out = get_valid_filename(value,self.experiment,local=self._local)
-        self._dir_beg = out[0]
-        self._dir_mid = out[1]
-        self._filename = out[2]
+        self._pathstr          = value
+        out                    = get_valid_filename(value, experiment=self.experiment, local=self._local)
+        self._dir_beg          = out[0]
+        self._dir_mid          = out[1]
+        self._filename         = out[2]
         self._data_source_type = out[3]
-        self._pathstr = value
     pathstr = property(_get_pathstr,_set_pathstr)
 
     # Retrieve dir_beg
@@ -85,10 +91,10 @@ class Filename(object):
     py_processed_path = property(_get_py_processed_path)
 
 # def [dir_beg, dir_mid, filename,varargout]=get_valid_filename(pathstr,varargin)
-def get_valid_filename(pathstr,experiment,verbose=False,local=False):
+def get_valid_filename(pathstr, experiment, verbose=False,local=False):
     # File doesn't exist
     # This case must terminate in us trying again.
-    logger.log(level=loggerlevel,msg='Input is: pathstr={}, experiment={}'.format(pathstr,experiment))
+    logger.log(level=loggerlevel,msg='Input is: pathstr={}'.format(pathstr))
 
     # ======================================
     # Return info if the file is local
@@ -115,7 +121,7 @@ def get_valid_filename(pathstr,experiment,verbose=False,local=False):
         # Append prefix
         prefix = get_remoteprefix()
         pathstr = _path.join(prefix,pathstr)
-        # print prefix
+        # print(prefix)
 
         # If it didn't work, we need to find the file somehow
         # The prefix may be wrong, the file may not be where we thought,
@@ -162,10 +168,10 @@ def get_valid_filename(pathstr,experiment,verbose=False,local=False):
 
                 raise IOError('Aborting')
             else:
-                print 'Thar be dragons!'
+                print('Thar be dragons!')
         logger.log(level=loggerlevel,msg='Trying new pathstr={}'.format(pathstr))
 
-        return get_valid_filename(pathstr,experiment)
+        return get_valid_filename(pathstr)
     elif _path.isdir(pathstr):
         logger.log(level=loggerlevel,msg='Path is a directory')
 
@@ -203,7 +209,7 @@ def get_valid_filename(pathstr,experiment,verbose=False,local=False):
                 raise IOError('Aborting')
         logger.log(level=loggerlevel,msg='Trying new pathstr={}'.format(pathstr))
 
-        return get_valid_filename(pathstr,experiment)
+        return get_valid_filename(pathstr)
 
     elif _path.isfile(pathstr):
         logger.log(level=loggerlevel,msg='Path is a file.')

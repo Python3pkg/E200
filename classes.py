@@ -1,44 +1,47 @@
 import numpy as _np
 import h5py as _h5
-from E200_api_getdat import E200_api_getdat
-from E200_Dat import *
+from .E200_api_getdat import E200_api_getdat
+from .E200_Dat import *
 
 __all__ = ['Data','Drill','E200_Dat','E200_Image']
 
 class Data(object):
-    def __init__(self,read_file,write_file):
+    def __enter__(self):
+        return self
+
+    def __init__(self,read_file):
         self.read_file=read_file
-        self.write_file=write_file
         self.rdrill=Drill(read_file)
-        self.wdrill=Drill(write_file)
 
         # self.data=datalevel()
         # recursivePopulate(self._data,self)
 
     def close(self):
         self.read_file.close()
-        self.write_file.close()
+
+    def __exit__(self, type, value, traceback):
+        self.close()
 
 class Drill(object):
     def __init__(self,data):
         self._hdf5 = data
         #  self._mydir = []
         for key in data.keys():
-            if key[0]!='#':
+            if key[0] != '#':
                 #  self._mydir.append(key)
                 out = data[key]
                 if type(out) == _h5._hl.group.Group:
                     setattr(self,key,Drill(data[key]))
+                elif key == 'dat' and ('UID' in data.keys()):
+                    uids = data['UID'].value
+                    dats = E200_api_getdat(data,uids)
+                    setattr(self,key,dats.dat)
                 elif len(out.shape) == 2:
                     if out.shape[0] == 1 or out.shape[1] == 1:
                         out=out.value.flatten()
                     setattr(self,key,out)
                 elif key == 'UID':
                     setattr(self,key,data[key].value)
-                elif key == 'dat':
-                    uids = data['UID'].value
-                    dats = E200_api_getdat(data,uids)
-                    setattr(self,key,dats.dat)
                 #  elif type(out) == _h5._hl.dataset.Dataset:
                 #          if 
                 #          if out[0][0]==_h5.h5r.Reference:

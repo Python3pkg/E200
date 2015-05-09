@@ -1,21 +1,23 @@
+import tifffile
 import h5py as _h5
 import numpy as _np
-import pdb
+import ipdb
 import matplotlib.pyplot as _plt
 # import mytools as _mt
-from E200_api_getdat import E200_api_getdat
+from .E200_api_getdat import E200_api_getdat
 import scipy.io as _spio
-from get_remoteprefix import get_remoteprefix
+from .get_remoteprefix import get_remoteprefix
 import os
-from classes import *
+from .classes import *
 import logging
 loggerlevel = logging.DEBUG
-logger=logging.getLogger(__name__)
+logger      = logging.getLogger(__name__)
 
-def E200_load_images(imgstr,UID=None):
-    logger.log(level=loggerlevel,msg='Loading images...')
+
+def E200_load_images(imgstr, UID=None):
+    logger.log(level=loggerlevel, msg='Loading images...')
     try:
-        remote_bool = imgstr.file['data']['VersionInfo']['remotefiles']['dat'][0,0]
+        remote_bool = imgstr._hdf5.file['data']['VersionInfo']['remotefiles']['dat'][0, 0]
     except:
         remote_bool = True
     if remote_bool:
@@ -23,19 +25,19 @@ def E200_load_images(imgstr,UID=None):
     else:
         prefix = ''
 
-    imgdat = E200_api_getdat(imgstr,UID=UID)
+    imgdat = E200_api_getdat(imgstr, UID=UID)
 
-    imgs = [_plt.imread(os.path.join(prefix,val[0:])) for val in imgdat.dat]
-    for i,img in enumerate(imgs):
+    imgs = [tifffile.imread(os.path.join(prefix, val[0:])) for val in imgdat.dat]
+    for i, img in enumerate(imgs):
         imgs[i] = _np.float64(img)
 
-    logger.log(level=loggerlevel,msg='Loading backgrounds...')
+    logger.log(level=loggerlevel, msg='Loading backgrounds...')
 
-    imgbgdat = E200_api_getdat(imgstr,fieldname='background_dat',UID=imgdat.uid)
+    imgbgdat = E200_api_getdat(imgstr, fieldname='background_dat', UID=imgdat.uid)
 
-    for i,val in enumerate(imgbgdat.dat):
+    for i, val in enumerate(imgbgdat.dat):
         # print val
-        val = os.path.join(prefix,val[0:])
+        val = os.path.join(prefix, val[0:])
         mat = _spio.loadmat(val)
         imgbg = mat['img']
         
@@ -44,4 +46,4 @@ def E200_load_images(imgstr,UID=None):
 
         imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
 
-    return E200_Image(images=_np.array(imgs),dat=imgdat.dat,uid=imgdat.uid)
+    return E200_Image(images=_np.array(imgs), dat=imgdat.dat, uid=imgdat.uid)
