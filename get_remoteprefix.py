@@ -27,7 +27,7 @@ def choose_remoteprefix(pathstart=def_prefix, verbose=True):
     return prefix
 
 
-def get_remoteprefix(test=True):
+def get_remoteprefix():
     app = mtqt.get_app()
 
     # =====================================
