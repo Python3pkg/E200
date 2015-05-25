@@ -5,6 +5,13 @@ import h5py as h5
 import logging
 logger = logging.getLogger(__name__)
 from .E200_Dat import *
+__all__ = ['E200_api_getdat','_numarray2str']
+
+
+def _numarray2str(numarray):
+    chars = [chr(val) for val in numarray.flatten()]
+    string = ''.join(chars)
+    return string
 
 
 def E200_api_getdat(dataset, UID=None, fieldname='dat', verbose=False):
