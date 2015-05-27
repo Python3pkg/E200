@@ -1,17 +1,11 @@
 import tempfile
 from .classes import *
-import numpy as np
 import h5py as _h5
 import subprocess
 import shlex
 import os
-import re
 from .E200_dataset2str import *
 from .get_valid_filename import *
-from warnings import warn
-import mytools.qt as mtqt
-from PyQt4 import QtGui
-# from PyQt4 import QtCore
 import logging
 loggerlevel = logging.DEBUG
 logger = logging.getLogger(__name__)
@@ -42,9 +36,10 @@ def _process_file(filename, temppath):
     # ======================================
     logger.log(level=loggerlevel, msg='Processed file not found, calling matlab to process file.')
     pwd = os.getcwd()
-    # matlab = '/Applications/MATLAB_R2014b.app/bin/matlab -nodisplay -nosplash'
-    matlab = 'fmatlab -nodisplay -nosplash'
-    command = '{matlab} -r "addpath(fullfile(getenv(\'HOME\'),\'E200_DRT/E200_data/\'),\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, pwd=pwd, filename=filename, outfile=temppath)
+    # matlab = '/Applications/MATLAB_R2015a.app/bin/matlab -nosplash'
+    matlab = '/Applications/MATLAB_R2015a.app/bin/matlab -nosplash -nodisplay'
+    # matlab = 'fmatlab -nodisplay -nosplash'
+    command = '{matlab} -r "addpath(fullfile(getenv(\'HOME\'),\'testbed/E200_DRT/E200_data/\'),\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, pwd=pwd, filename=filename, outfile=temppath)
     
     logger.log(level=loggerlevel, msg='Command given is: {}'.format(command))
     subprocess.call(shlex.split(command))

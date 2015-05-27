@@ -4,7 +4,7 @@ import sys
 import configparser as ConfigParser
 import inspect
 from PyQt4 import QtGui, QtCore
-import mytools.qt as mtqt
+import pytools.qt as mtqt
 import numpy as _np
 
 __all__    = ['get_remoteprefix', 'set_remoteprefix', 'choose_remoteprefix', '_get_configpath', '_get_directory', '_get_datapath']

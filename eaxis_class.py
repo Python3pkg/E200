@@ -1,20 +1,20 @@
 import E200
-import mytools as mt
+import pytools as mt
 import numpy as np
-import pdb
 
 __all__ = ['Energy_Axis']
 
 import logging
 loggerlevel = logging.DEBUG
-logger=logging.getLogger(__name__)
+logger      = logging.getLogger(__name__)
+
 
 class Energy_Axis(object):
     """Object that sets up energy function to compute energy axis"""
     # ===================================
     # Initialize class
     # ===================================
-    def __init__(self,camname,hdf5_data,uid):
+    def __init__(self, camname, hdf5_data, uid):
         """Initialize input parameters"""
         self.camname    = camname
         self._hdf5_data = hdf5_data
@@ -32,17 +32,18 @@ class Energy_Axis(object):
 
     def _get_hdf5_data(self):
         return self._hdf5_data
-    def _set_hdf5_data(self,value):
+
+    def _set_hdf5_data(self, value):
         self._hdf5_data = value
         self._reset_class()
-    hdf5_data = property(_get_hdf5_data,_set_hdf5_data)
+    hdf5_data = property(_get_hdf5_data, _set_hdf5_data)
 
     # ===================================
     # Get dataset number
     # ===================================
     def _get_dataset_num(self):
         """Get dataset number from first motor UID"""
-        if self._dataset_num == None:
+        if self._dataset_num is None:
             dataset_num       = np.int64(self._hdf5_data['raw']['scalars']['XPS_LI20_DWFA_M5']['UID'].value[0][0])
             dataset_num       = str(dataset_num)
             dataset_num = dataset_num[0:5]
@@ -55,7 +56,7 @@ class Energy_Axis(object):
     def _get_res(self):
         """Camera resolution"""
         imgstr = self._hdf5_data['raw']['images'][str(self.camname)]
-        res    = np.float64(imgstr['RESOLUTION'][0,0])
+        res    = np.float64(imgstr['RESOLUTION'][0, 0])
         res    = res*np.float64(1.0e-6)
         return res
     res = property(_get_res)
@@ -68,9 +69,9 @@ class Energy_Axis(object):
         """Motor position from file"""
         #  if self.camname=='ELANEX':
         ymotor = hdf5_data['raw']['scalars']['XPS_LI20_DWFA_M5']['dat']
-        ymotor = mt.derefdataset(ymotor,hdf5_data.file)
+        ymotor = mt.derefdataset(ymotor, hdf5_data.file)
         ymotor = ymotor[0]*1e-3
-        logger.log(level=loggerlevel,msg='Original ymotor is: {}'.format(ymotor))
+        logger.log(level=loggerlevel, msg='Original ymotor is: {}'.format(ymotor))
         return ymotor
     ymotor_orig = property(_get_ymotor_orig)
 
@@ -83,11 +84,11 @@ class Energy_Axis(object):
             raw_rf     = self.hdf5_data['raw']
             scalars_rf = raw_rf['scalars']
             setQS_str  = scalars_rf['step_value']
-            setQS_dat  = E200.E200_api_getdat(setQS_str,self._uid).dat[0]
+            setQS_dat  = E200.E200_api_getdat(setQS_str, self._uid).dat[0]
             #  setQS_dat=0
             self._setQS      = mt.hardcode.setQS(setQS_dat)
 
-            logger.log(level=loggerlevel,msg='Eaxis''s setQS is: {}'.format(setQS_dat))
+            logger.log(level=loggerlevel, msg='Eaxis''s setQS is: {}'.format(setQS_dat))
 
         return self._setQS
     setQS = property(_get_setQS)
@@ -97,7 +98,7 @@ class Energy_Axis(object):
     # ===================================
     def _get_ymotor(self):
         ymotor = self.setQS.elanex_y_motor()*1e-3
-        logger.log(level=loggerlevel,msg='Reconstructed ymotor is: {ymotor}'.format(ymotor=ymotor))
+        logger.log(level=loggerlevel, msg='Reconstructed ymotor is: {ymotor}'.format(ymotor=ymotor))
         return ymotor
     ymotor = property(_get_ymotor)
 
@@ -113,11 +114,11 @@ class Energy_Axis(object):
     # ===================================
     def _get_theta(self):
         return self._theta
-    theta=property(_get_theta)
+    theta = property(_get_theta)
 
     def _get_Lmag(self):
         return self._Lmag
-    Lmag=property(_get_Lmag)
+    Lmag = property(_get_Lmag)
 
     def _get_Ldrift(self):
         # Drift length depends on camera location
@@ -127,7 +128,7 @@ class Energy_Axis(object):
             self._Ldrift = np.float64(8.792573) + 0.8198
 
         return self._Ldrift
-    Ldrift=property(_get_Ldrift)
+    Ldrift = property(_get_Ldrift)
 
     # ===================================
     # Set ypinch and eta0 to self
@@ -137,7 +138,7 @@ class Energy_Axis(object):
         # ===================================
         # Find and write eta_0, y_0
         # ===================================
-        self.E0=20.35
+        self.E0 = 20.35
 
         if self.dataset_num is None:
             logger.critical('No dataset_num detected')
@@ -150,20 +151,20 @@ class Energy_Axis(object):
 
             logger.debug('Dataset_num: {}'.format(self.dataset_num))
             if self.dataset_num == '13437' or self.dataset_num == '13438':
-                y0       = np.float64(1589)   # pixel position of E0 (20.35 GeV).
-                eta_0_px = np.float64(949.72) # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
+                y0       = np.float64(1589)    # pixel position of E0 (20.35 GeV).
+                eta_0_px = np.float64(949.72)  # nominal dipole dispersion in pixel, corresponding to 59.5 mm.
 
             elif self.dataset_num == '13448' or self.dataset_num == '13449':
                 y0       = np.float64(1605.5) - np.float64(0.7923)*(self.E0+QS)  # y0 is adjusted to account for QS dispersion.
                 eta_0_px = np.float64(949.72) + np.float64(0.7923)*(self.E0+QS)  # added QS dispersion of 0.7923 pix per QS GeV.
 
             elif self.dataset_num == '13450':
-                y0       = np.float64(1655)   - np.float64(3.321)*(self.E0+QS) # y0 is adjusted to account for QS dispersion.
-                eta_0_px = np.float64(949.72) + np.float64(3.321)*(self.E0+QS) # added QS dispersion of 3.321 pix per QS GeV.
+                y0       = np.float64(1655)   - np.float64(3.321)*(self.E0+QS)  # y0 is adjusted to account for QS dispersion.
+                eta_0_px = np.float64(949.72) + np.float64(3.321)*(self.E0+QS)  # added QS dispersion of 3.321 pix per QS GeV.
 
             elif self.dataset_num == '13537':
-                y0       = np.float64(1576)   + np.float(0.5193)*(20.35+QS) # y0 is adjusted to account for QS dispersion.
-                eta_0_px = np.float64(949.72) - np.float(0.5193)*(20.35+QS) # added QS dispersion of -0.5193 pix per QS GeV.
+                y0       = np.float64(1576)   + np.float(0.5193)*(20.35+QS)  # y0 is adjusted to account for QS dispersion.
+                eta_0_px = np.float64(949.72) - np.float(0.5193)*(20.35+QS)  # added QS dispersion of -0.5193 pix per QS GeV.
             else:
                 raise ValueError('Dataset number does not exist: {}'.format(self.dataset_num))
 
@@ -171,11 +172,11 @@ class Energy_Axis(object):
                 # ===================================
                 # Sebastien's code
                 # ===================================
-                z_B5D36    = np.float64(2005.65085 ) # middle of dipole magnet
-                z_ELANEX   = np.float64(2015.22    ) # linac z location of ELANEX phosphor screen in meter
-                z_CFAR     = np.float64(2016.04    ) # linac z location of Cherenkov Far gap in meter
-                cal_ELANEX = np.float64(8.9185     ) # ELANEX camera calibration in um/pixel
-                cal_CFAR   = np.float64(62.65      ) # CMOS FAR camera calibration in um/pixel
+                z_B5D36    = np.float64(2005.65085 )  # middle of dipole magnet
+                z_ELANEX   = np.float64(2015.22    )  # linac z location of ELANEX phosphor screen in meter
+                z_CFAR     = np.float64(2016.04    )  # linac z location of Cherenkov Far gap in meter
+                cal_ELANEX = np.float64(8.9185     )  # ELANEX camera calibration in um/pixel
+                cal_CFAR   = np.float64(62.65      )  # CMOS FAR camera calibration in um/pixel
 
                 # y0 = 259 (when QS=0) at ELANEX corresponds to y0 = 1589 on CMOS FAR.
                 y0           = np.float64(259) + (cal_CFAR/cal_ELANEX) * (y0-np.float64(1589))
@@ -202,7 +203,7 @@ class Energy_Axis(object):
         return self._eta0
     eta0 = property(_get_eta0)
 
-    def energy(self,ypx):
+    def energy(self, ypx):
         # ===================================
         # Assuming thin lens
         # ===================================
@@ -218,7 +219,7 @@ class Energy_Axis(object):
         else:
             raise NotImplemented('Camera not implemented: {}'.format(self.camname))
 
-        logger.log(level=loggerlevel,msg='Eta0 is: {}'.format(self.eta0))
+        logger.log(level=loggerlevel, msg='Eta0 is: {}'.format(self.eta0))
 
         approx = self.eta0*self.E0 / y
         return approx

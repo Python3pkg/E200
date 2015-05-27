@@ -27,7 +27,7 @@ def E200_load_images(imgstr, UID=None):
 
     imgdat = E200_api_getdat(imgstr, UID=UID)
 
-    imgs = [tifffile.imread(os.path.join(prefix, val[0:])) for val in imgdat.dat]
+    imgs = [tifffile.imread(os.path.join(prefix, val[1:])) for val in imgdat.dat]
     for i, img in enumerate(imgs):
         imgs[i] = _np.float64(img)
 
@@ -37,7 +37,7 @@ def E200_load_images(imgstr, UID=None):
 
     for i, val in enumerate(imgbgdat.dat):
         # print val
-        val = os.path.join(prefix, val[0:])
+        val = os.path.join(prefix, val[1:])
         mat = _spio.loadmat(val)
         imgbg = mat['img']
         
