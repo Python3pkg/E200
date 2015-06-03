@@ -3,7 +3,9 @@ import numpy as np
 from pytools.convertH5ref import convertH5ref as _convertH5ref
 
 
-def E200_api_getUID(struct, val, f):
+def E200_api_getUID(struct, val, f=None):
+    if f is None:
+        f = struct._hdf5
     uids = struct['UID']
     vals = struct['dat']
 

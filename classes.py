@@ -3,18 +3,19 @@ import h5py as _h5
 from .E200_api_getdat import E200_api_getdat
 from .E200_Dat import *
 
-__all__ = ['Data','Drill','E200_Dat','E200_Image']
+__all__ = ['Data', 'Drill', 'E200_Dat', 'E200_Image']
+
 
 class Data(object):
     def __enter__(self):
         return self
 
-    def __init__(self,read_file):
-        self.read_file=read_file
-        self.rdrill=Drill(read_file)
+    def __init__(self, read_file):
+        self.read_file = read_file
+        self.rdrill    = Drill(read_file)
 
         # self.data=datalevel()
-        # recursivePopulate(self._data,self)
+        # recursivePopulate(self._data, self)
 
     def close(self):
         self.read_file.close()
@@ -22,8 +23,9 @@ class Data(object):
     def __exit__(self, type, value, traceback):
         self.close()
 
+
 class Drill(object):
-    def __init__(self,data):
+    def __init__(self, data):
         self._hdf5 = data
         #  self._mydir = []
         for key in data.keys():
@@ -31,19 +33,19 @@ class Drill(object):
                 #  self._mydir.append(key)
                 out = data[key]
                 if type(out) == _h5._hl.group.Group:
-                    setattr(self,key,Drill(data[key]))
+                    setattr(self, key, Drill(data[key]))
                 elif key == 'dat' and ('UID' in data.keys()):
                     uids = data['UID'].value
-                    dats = E200_api_getdat(data,uids)
-                    setattr(self,key,dats.dat)
+                    dats = E200_api_getdat(data, uids)
+                    setattr(self, key, dats.dat)
                 elif len(out.shape) == 2:
                     if out.shape[0] == 1 or out.shape[1] == 1:
-                        out=out.value.flatten()
-                    setattr(self,key,out)
+                        out = out.value.flatten()
+                    setattr(self, key, out)
                 elif key == 'UID':
-                    setattr(self,key,data[key].value)
+                    setattr(self, key, data[key].value)
                 #  elif type(out) == _h5._hl.dataset.Dataset:
-                #          if 
+                #          if
                 #          if out[0][0]==_h5.h5r.Reference:
                 #                  vals=[out.file[val[0]] for val in out]
                 #          else:
@@ -55,9 +57,9 @@ class Drill(object):
                 #          else:
                 #                  vals = [val[0] for val in vals]
                 #                  vals = np.array(vals)
-                #          setattr(self,key,vals)
+                #          setattr(self, key, vals)
                 else:
-                    setattr(self,key,data[key])
+                    setattr(self, key, data[key])
 
     def __repr__(self):
         out = '\<E200.E200_load_data.Drill with keys:\n_hdf5'
@@ -67,16 +69,25 @@ class Drill(object):
         out = out[1:] + '\n>'
         return out
 
+
 class E200_Image(E200_Dat):
-    def __init__(self,images,dat,uid,image_backgrounds=None):
-        E200_Dat.__init__(self,dat,uid,field='dat')
+    def __init__(self, images, dat, uid, image_backgrounds=None):
+        self._imgs_subbed = None
+        E200_Dat.__init__(self, dat, uid, field='dat')
         self._images = images
         self._image_backgrounds = image_backgrounds
 
     def _get_images(self):
         return self._images
-    images=property(_get_images)
+    images = property(_get_images)
 
     def _get_image_backgrounds(self):
         return self._image_backgrounds
-    image_backgrounds=property(_get_image_backgrounds)
+    image_backgrounds = property(_get_image_backgrounds)
+
+    @property
+    def imgs_subbed(self):
+        if self._imgs_subbed is None:
+            self._imgs_subbed = self.images - 2*_np.fliplr(self.image_backgrounds)
+        
+        return self._imgs_subbed

@@ -35,15 +35,17 @@ def E200_load_images(imgstr, UID=None):
 
     imgbgdat = E200_api_getdat(imgstr, fieldname='background_dat', UID=imgdat.uid)
 
-    for i, val in enumerate(imgbgdat.dat):
-        # print val
-        val = os.path.join(prefix, val[1:])
-        mat = _spio.loadmat(val)
-        imgbg = mat['img']
+    # for i, val in enumerate(imgbgdat.dat):
+    # print val
+    i = 0
+    val = imgbgdat.dat[i]
+    val = os.path.join(prefix, val[1:])
+    mat = _spio.loadmat(val)
+    imgbg = mat['img']
         
-        if imgs[i].shape[0] == imgbg.shape[1]:
-            imgbg = _np.transpose(imgbg)
+    # if imgs[i].shape[0] == imgbg.shape[1]:
+    #     imgbg = _np.transpose(imgbg)
 
-        imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
+    # imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
 
-    return E200_Image(images=_np.array(imgs), dat=imgdat.dat, uid=imgdat.uid)
+    return E200_Image(images=_np.array(imgs), dat=imgdat.dat, uid=imgdat.uid, image_backgrounds=imgbg)
