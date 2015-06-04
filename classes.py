@@ -10,12 +10,17 @@ class Data(object):
     def __enter__(self):
         return self
 
-    def __init__(self, read_file):
+    def __init__(self, read_file, filename=None):
+        self._filename = filename
         self.read_file = read_file
         self.rdrill    = Drill(read_file)
 
         # self.data=datalevel()
         # recursivePopulate(self._data, self)
+
+    @property
+    def filename(self):
+        return self._filename
 
     def close(self):
         self.read_file.close()

@@ -5,6 +5,8 @@ import glob
 import os
 import pytools as pt
 import re
+import logging
+logger = logging.getLogger(__name__)
 
 
 def E200_load_data_gui(experiment=None):
@@ -25,7 +27,7 @@ def E200_load_data_gui(experiment=None):
     # ======================================
     # User selects file
     # ======================================
-    app = pt.qt.get_app()
+    app = pt.qt.get_app()  # NOQA
     loadfile = QtGui.QFileDialog.getOpenFileName(directory=temppath, filter='*.mat')
     if loadfile == '':
         input('No file chosen, press enter to close...')
@@ -36,5 +38,6 @@ def E200_load_data_gui(experiment=None):
     loadfile  = loadmatch.group()
     # loadfile  = 'nas/nas-li20-pm00/E217/2015/20150504/E217_16808/E217_16808.mat'
     # ipdb.set_trace()
+    logger.info('File to load is: {}'.format(loadfile))
 
     return E200_load_data(loadfile)

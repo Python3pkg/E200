@@ -50,38 +50,9 @@ def _process_file(filename, temppath):
     logger.log(level=loggerlevel, msg='Loading processed file')
     f = _h5.File(temppath, 'r', driver='core', backing_store=False)
 
-    output = Data(read_file = f)
+    output = Data(read_file = f, filename=filename)
 
     return output
-    # loadreq = E200_dataset2str(output.rdrill.data.VersionInfo.loadrequest)
-    # logger.log(level=loggerlevel, msg='Load request: {}'.format(loadreq))
-
-    # # ======================================
-    # # Determine if the loaded file matches
-    # # the requested file
-    # # ======================================
-    # if loadreq == filename:
-    #     logger.log(level=loggerlevel, msg='Request matches loaded file, continuing...')
-    #     return output
-    # else:
-    #     logger.log(level=loggerlevel, msg='Request doesn''t match loaded file, removing processed file and retrying...')
-    #     try:
-    #         os.remove(vfn.processed_path)
-    #     except OSError:
-    #         pass
-
-    #     try:
-    #         os.remove(vfn.py_processed_path)
-    #     except OSError:
-    #         pass
-    #     ipdb.set_trace()
-    #     return E200_load_data(
-    #         filename   = filename,
-    #         writefile  = writefile,
-    #         verbose    = verbose,
-    #         readonly   = readonly,
-    #         local      = local
-    #         )
 
 
 def _load_data(wf):
