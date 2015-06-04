@@ -1,7 +1,7 @@
 import numpy as _np
 import h5py as _h5
 from .E200_api_getdat import E200_api_getdat
-from .E200_Dat import *
+from .E200_Dat import *  # NOQA
 
 __all__ = ['Data', 'Drill', 'E200_Dat', 'E200_Image']
 
@@ -76,11 +76,14 @@ class Drill(object):
 
 
 class E200_Image(E200_Dat):
-    def __init__(self, images, dat, uid, image_backgrounds=None):
+    def __init__(self, images, dat, uid, timestamps, image_backgrounds=None):
         self._imgs_subbed = None
+
         E200_Dat.__init__(self, dat, uid, field='dat')
-        self._images = images
+
+        self._images            = images
         self._image_backgrounds = image_backgrounds
+        self._timestamps        = timestamps
 
     def _get_images(self):
         return self._images
@@ -96,3 +99,7 @@ class E200_Image(E200_Dat):
             self._imgs_subbed = self.images - 2*_np.fliplr(self.image_backgrounds)
         
         return self._imgs_subbed
+
+    @property
+    def timestamps(self):
+        return self._timestamps

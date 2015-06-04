@@ -3,13 +3,13 @@ loggerlevel = 9
 loggerlevel = logging.DEBUG
 logger      = logging.getLogger(__name__)
 
+from .get_remoteprefix import *  # NOQA
 from PyQt4 import QtGui as _QtGui
-from .get_remoteprefix import *
 from glob import glob as _glob
-import pytools as _mt
-import pytools.qt as _mtqt
 import numpy as _np
 import os.path as _path
+import pytools as _mt
+import pytools.qt as _mtqt
 import re as _re
 import warnings as _warnings
 

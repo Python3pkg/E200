@@ -1,15 +1,13 @@
-import tifffile
-import h5py as _h5
-import numpy as _np
-import ipdb
-import matplotlib.pyplot as _plt
-# import mytools as _mt
+# import tifffile
 from .E200_api_getdat import E200_api_getdat
-import scipy.io as _spio
+from .classes import *  # NOQA
 from .get_remoteprefix import get_remoteprefix
-import os
-from .classes import *
+import PIL
+import ipdb  # NOQA
 import logging
+import numpy as _np
+import os
+import scipy.io as _spio
 loggerlevel = logging.DEBUG
 logger      = logging.getLogger(__name__)
 
@@ -27,9 +25,14 @@ def E200_load_images(imgstr, UID=None):
 
     imgdat = E200_api_getdat(imgstr, UID=UID)
 
-    imgs = [tifffile.imread(os.path.join(prefix, val[1:])) for val in imgdat.dat]
+    # ipdb.set_trace()
+    imgs = _np.array([PIL.Image.open(os.path.join(prefix, val[1:])) for val in imgdat.dat], dtype=object)
+    num_imgs = _np.size(imgs)
+    timestamps = _np.empty(num_imgs)
     for i, img in enumerate(imgs):
-        imgs[i] = _np.float64(img)
+        img_arr       = _np.asarray(img)
+        imgs[i]       = _np.float64(img_arr)
+        timestamps[i] = img.tag[65002][0]
 
     logger.log(level=loggerlevel, msg='Loading backgrounds...')
 
@@ -48,4 +51,4 @@ def E200_load_images(imgstr, UID=None):
 
     # imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
 
-    return E200_Image(images=_np.array(imgs), dat=imgdat.dat, uid=imgdat.uid, image_backgrounds=imgbg)
+    return E200_Image(images=_np.array(imgs), dat=imgdat.dat, uid=imgdat.uid, image_backgrounds=imgbg, timestamps=timestamps)

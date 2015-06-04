@@ -1,9 +1,8 @@
-import ipdb
+import ipdb  # NOQA
 import os
-import sys
 import configparser as ConfigParser
 import inspect
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 import pytools.qt as mtqt
 import numpy as _np
 
@@ -12,7 +11,7 @@ def_prefix = '/Volumes/PWFA_4big'
 
 
 def choose_remoteprefix(pathstart=def_prefix, verbose=True):
-    app = mtqt.get_app()
+    app = mtqt.get_app()  # NOQA
     if not os.path.isdir(pathstart):
         pathstart = '/'
     prefix = mtqt.getExistingDirectory(caption='Change prefix', directory=pathstart)
@@ -28,7 +27,7 @@ def choose_remoteprefix(pathstart=def_prefix, verbose=True):
 
 
 def get_remoteprefix():
-    app = mtqt.get_app()
+    app = mtqt.get_app()  # NOQA
 
     # =====================================
     # Default prefix

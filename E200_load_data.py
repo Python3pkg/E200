@@ -1,14 +1,15 @@
-import tempfile
-from .classes import *
+from .E200_dataset2str import *     # NOQA
+from .classes import *              # NOQA
+from .get_valid_filename import *   # NOQA
+from .get_matlab import get_matlab
 import h5py as _h5
-import subprocess
-import shlex
-import os
-from .E200_dataset2str import *
-from .get_valid_filename import *
 import logging
+import os
+import shlex
+import subprocess
+import tempfile
 loggerlevel = logging.DEBUG
-logger = logging.getLogger(__name__)
+logger      = logging.getLogger(__name__)
 
 # import ipdb
 
@@ -36,9 +37,7 @@ def _process_file(filename, temppath):
     # ======================================
     logger.log(level=loggerlevel, msg='Processed file not found, calling matlab to process file.')
     pwd = os.getcwd()
-    # matlab = '/Applications/MATLAB_R2015a.app/bin/matlab -nosplash'
-    # matlab = '/Applications/MATLAB_R2015a.app/bin/matlab -nosplash -nodisplay'
-    matlab = 'fmatlab -nodisplay -nosplash'
+    matlab = get_matlab()
     command = '{matlab} -r "addpath(fullfile(getenv(\'HOME\'),\'testbed/E200_DRT/E200_data/\'),\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, pwd=pwd, filename=filename, outfile=temppath)
     
     logger.log(level=loggerlevel, msg='Command given is: {}'.format(command))
