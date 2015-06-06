@@ -1,3 +1,4 @@
+import os as _os
 import numpy as _np
 import h5py as _h5
 from .E200_api_getdat import E200_api_getdat
@@ -21,6 +22,10 @@ class Data(object):
     @property
     def filename(self):
         return self._filename
+
+    @property
+    def loadname(self):
+        return _os.path.splitext(_os.path.basename(self.filename))[0]
 
     def close(self):
         self.read_file.close()

@@ -25,6 +25,7 @@ def get_matlab(display=False, splash=False):
 
     return matlab_base + options
 
+
 def is_facet_srv():
     nodename = platform.node()
     if nodename[0:-2] == 'facet-srv':

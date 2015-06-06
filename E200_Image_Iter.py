@@ -20,7 +20,7 @@ class E200_Image_Iter(object):
             if is_facet_srv():
                 numperset = 50
             else:
-                numperset = -1
+                numperset = 500
 
         # ======================================
         # Initialize requested iterator
