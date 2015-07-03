@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def E200_load_data_gui(experiment=None):
+def E200_load_data_gui(experiment=None, verbose=False):
     if experiment is not None:
         recent = 'nas/nas-li20-pm00/{}'.format(experiment)
     else:
@@ -37,7 +37,11 @@ def E200_load_data_gui(experiment=None):
     loadmatch = p.search(loadfile)
     loadfile  = loadmatch.group()
     # loadfile  = 'nas/nas-li20-pm00/E217/2015/20150504/E217_16808/E217_16808.mat'
-    # ipdb.set_trace()
-    logger.info('File to load is: {}'.format(loadfile))
+
+    logstring = 'File to load is: {}'.format(loadfile)
+    if verbose:
+        print('In order to load file:\ndata = E200.E200_load_data(\'{}\')'.format(loadfile))
+
+    logger.info(logstring)
 
     return E200_load_data(loadfile)

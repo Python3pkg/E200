@@ -31,7 +31,7 @@ def E200_load_images(imgstr, UID=None):
     timestamps = _np.empty(num_imgs)
     for i, img in enumerate(imgs):
         img_arr       = _np.asarray(img)
-        imgs[i]       = _np.float64(img_arr)
+        imgs[i]       = _np.uint64(img_arr)
         timestamps[i] = img.tag[65002][0]
 
     logger.log(level=loggerlevel, msg='Loading backgrounds...')
