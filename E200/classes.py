@@ -2,7 +2,7 @@ import os as _os
 import numpy as _np
 import h5py as _h5
 from .E200_api_getdat import E200_api_getdat
-from .E200_Dat import *  # NOQA
+from .E200_Dat import *                        # noqa
 
 __all__ = ['Data', 'Drill', 'E200_Dat', 'E200_Image']
 

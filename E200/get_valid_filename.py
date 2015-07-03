@@ -8,8 +8,8 @@ from PyQt4 import QtGui as _QtGui
 from glob import glob as _glob
 import numpy as _np
 import os.path as _path
-import pytools as _mt
-import pytools.qt as _mtqt
+import scisalt as _mt
+import scisalt.qt as _mtqt
 import re as _re
 import warnings as _warnings
 

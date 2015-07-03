@@ -3,7 +3,7 @@ from .get_remoteprefix import get_remoteprefix
 import PyQt4.QtGui as QtGui
 import glob
 import os
-import pytools as pt
+import scisalt as pt
 import re
 import logging
 logger = logging.getLogger(__name__)

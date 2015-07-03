@@ -2,7 +2,7 @@ import E200
 import numpy as np
 import scipy.optimize as spopt
 import matplotlib.pyplot as plt
-import pytools as mt
+import scisalt as mt
 __all__ = ['eaxis', 'eaxis_ELANEX', 'yaxis_ELANEX', 'yanalytic', 'E_no_eta', 'y_no_eta']
 
 import logging
