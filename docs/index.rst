@@ -10,10 +10,10 @@ Welcome! This is the documentation for E200, last updated |today|.
 
 Parts of the documentation:
 
-.. .. toctree::
-..    :maxdepth: 2
+.. toctree::
+   :maxdepth: 2
    
-..    images
+   images
 
 Indices and tables
 ==================
