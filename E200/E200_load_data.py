@@ -38,7 +38,7 @@ def _process_file(filename, temppath):
     logger.log(level=loggerlevel, msg='Processed file not found, calling matlab to process file.')
     pwd = os.getcwd()
     matlab = get_matlab()
-    command = '{matlab} -r "addpath(fullfile(getenv(\'HOME\'),\'testbed/E200_DRT/E200_data/\'),\'~/python-dev-modules/E200/\');cd(\'{pwd}\');convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, pwd=pwd, filename=filename, outfile=temppath)
+    command = '{matlab} -r "convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, pwd=pwd, filename=filename, outfile=temppath)
     
     logger.log(level=loggerlevel, msg='Command given is: {}'.format(command))
     subprocess.call(shlex.split(command))
