@@ -16,6 +16,7 @@ This is the documentation for E200, last updated |today|.
 .. toctree::
    :maxdepth: 2
    
+   introduction
    images
 
 Indices and tables
