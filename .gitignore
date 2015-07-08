@@ -3,3 +3,7 @@
 *~
 *.cfg
 .nfs*
+build
+_build
+dist
+*.egg-info
