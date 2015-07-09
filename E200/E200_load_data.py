@@ -38,7 +38,8 @@ def _process_file(filename, temppath):
     logger.log(level=loggerlevel, msg='Processed file not found, calling matlab to process file.')
     pwd = os.getcwd()
     matlab = get_matlab()
-    command = '{matlab} -r "convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, pwd=pwd, filename=filename, outfile=temppath)
+    curdir = os.path.dirname(os.path.realpath(__file__))
+    command = '{matlab} -r "addpath(\'{curdir}\');convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, curdir=curdir, pwd=pwd, filename=filename, outfile=temppath)
     
     logger.log(level=loggerlevel, msg='Command given is: {}'.format(command))
     subprocess.call(shlex.split(command))
