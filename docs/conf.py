@@ -117,8 +117,8 @@ todo_include_todos = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-# html_theme = 'sphinx_py3doc_enhanced_theme'
-html_theme = 'classic'
+html_theme = 'sphinx_py3doc_enhanced_theme'
+# html_theme = 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -136,11 +136,15 @@ html_theme_options = {
     'sidebarlinkcolor': '#444444',
     'bgcolor': 'white',
     'textcolor': '#222222',
-    'linkcolor': '#0072aa',
+    'linkcolor': '#0072AA',
     'visitedlinkcolor': '#6363bb',
     'headtextcolor': '#1a1a1a',
     'headbgcolor': 'white',
     'headlinkcolor': '#aaaaaa',
+    'headshadow': False,
+    'codeshadow': False,
+    'newstylecode': False,
+    'selectcurrentloc': False
     }
 
 # Add any paths that contain custom themes here, relative to this directory.

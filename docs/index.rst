@@ -14,9 +14,11 @@ E200 Documentation
 This is the documentation for E200, last updated |today|.
 
 .. toctree::
+   :numbered:
    :maxdepth: 2
    
    introduction
+   api
    images
 
 Indices and tables
