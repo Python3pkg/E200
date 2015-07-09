@@ -9,7 +9,7 @@ Welcome to E200
 E200 is designed to load and handle data generated at FACET at the SLAC National Accelerator Laboratory. In particular, it makes loading datasets and images much simpler.
 
 E200 Documentation
-==================
+------------------
 
 This is the documentation for E200, last updated |today|.
 
@@ -20,13 +20,8 @@ This is the documentation for E200, last updated |today|.
    images
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-Introduction
-============
-
-E200 is a package designed to make loading and manipulating data collected at FACET at SLAC National Accelerator Laboratory.

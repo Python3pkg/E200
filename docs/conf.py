@@ -117,12 +117,31 @@ todo_include_todos = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_py3doc_enhanced_theme'
+# html_theme = 'sphinx_py3doc_enhanced_theme'
+html_theme = 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'bodyfont': '\'Lucida Grande\', Arial, sans-serif',
+    'headfont': '\'Lucida Grande\', Arial, sans-serif',
+    'footerbgcolor': 'white',
+    'footertextcolor': '#555555',
+    'relbarbgcolor': 'white',
+    'relbartextcolor': '#666666',
+    'relbarlinkcolor': '#444444',
+    'sidebarbgcolor': 'white',
+    'sidebartextcolor': '#444444',
+    'sidebarlinkcolor': '#444444',
+    'bgcolor': 'white',
+    'textcolor': '#222222',
+    'linkcolor': '#0072aa',
+    'visitedlinkcolor': '#6363bb',
+    'headtextcolor': '#1a1a1a',
+    'headbgcolor': 'white',
+    'headlinkcolor': '#aaaaaa',
+    }
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
