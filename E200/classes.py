@@ -8,6 +8,9 @@ __all__ = ['Data', 'Drill', 'E200_Dat', 'E200_Image']
 
 
 class Data(object):
+    """
+    This
+    """
     def __enter__(self):
         return self
 
@@ -43,7 +46,12 @@ class Drill(object):
                 #  self._mydir.append(key)
                 out = data[key]
                 if type(out) == _h5._hl.group.Group:
-                    setattr(self, key, Drill(data[key]))
+                    setattr(self, key, Drill(out))
+                elif key == 'desc':
+                    desc = out.value.flatten()
+                    desc = desc.view('S2')
+                    desc = _np.char.decode(desc, 'UTF-8')
+                    setattr(self, key, ''.join(desc))
                 elif key == 'dat' and ('UID' in data.keys()):
                     uids = data['UID'].value
                     dats = E200_api_getdat(data, uids)
@@ -53,7 +61,7 @@ class Drill(object):
                         out = out.value.flatten()
                     setattr(self, key, out)
                 elif key == 'UID':
-                    setattr(self, key, data[key].value)
+                    setattr(self, key, out.value)
                 #  elif type(out) == _h5._hl.dataset.Dataset:
                 #          if
                 #          if out[0][0]==_h5.h5r.Reference:
@@ -69,7 +77,7 @@ class Drill(object):
                 #                  vals = np.array(vals)
                 #          setattr(self, key, vals)
                 else:
-                    setattr(self, key, data[key])
+                    setattr(self, key, out)
 
     def __repr__(self):
         out = '\<E200.E200_load_data.Drill with keys:\n_hdf5'

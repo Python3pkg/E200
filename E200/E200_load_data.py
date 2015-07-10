@@ -11,8 +11,6 @@ import tempfile
 loggerlevel = logging.DEBUG
 logger      = logging.getLogger(__name__)
 
-# import ipdb
-
 __all__ = ['E200_load_data']
 
 

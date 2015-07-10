@@ -3,7 +3,6 @@ from .E200_api_getdat import E200_api_getdat
 from .classes import *  # NOQA
 from .get_remoteprefix import get_remoteprefix
 import PIL
-import ipdb  # NOQA
 import logging
 import numpy as _np
 import os
@@ -25,7 +24,6 @@ def E200_load_images(imgstr, UID=None):
 
     imgdat = E200_api_getdat(imgstr, UID=UID)
 
-    # ipdb.set_trace()
     imgs = _np.array([PIL.Image.open(os.path.join(prefix, val[1:])) for val in imgdat.dat], dtype=object)
     num_imgs = _np.size(imgs)
     timestamps = _np.empty(num_imgs)

@@ -19,7 +19,7 @@ This is the documentation for E200, last updated |today|.
    
    introduction
    api
-   images
+   classes
 
 Indices and tables
 ------------------

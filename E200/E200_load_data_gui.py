@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 def E200_load_data_gui(experiment=None, verbose=False):
+    """
+    Allows user to select dataset file to load. 
+    """
     if experiment is not None:
         recent = 'nas/nas-li20-pm00/{}'.format(experiment)
     else:

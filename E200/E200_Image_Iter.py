@@ -1,7 +1,6 @@
 import numpy as _np
 from .E200_load_images import E200_load_images
 from .get_matlab import is_facet_srv
-import ipdb  # NOQA
 import logging
 from .classes import E200_Image
 logger = logging.getLogger(__name__)
@@ -61,7 +60,6 @@ class E200_Image_Iter(object):
             # Load only up to the next batch avail.
             # uids to prevent memory overflow
             # ======================================
-            # ipdb.set_trace()
             num_uids_left = _np.size(self._uids)
             logger.debug('Number of UIDs left: {}'.format(num_uids_left))
 
