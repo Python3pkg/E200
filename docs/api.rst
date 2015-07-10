@@ -99,7 +99,7 @@ This holds true across all tree tips, except for in images, where ``dat`` is a f
 UID
 ---
 
-Uids are used to correlate data. Every single shot at FACET is designed to have a unique identification number or :ref:`uid`. Every piece of BSA data, whether it is an image or a number, is correlated to a :ref:`uid`. Nearly 
+Uids are used to correlate data. Every single shot at FACET is designed to have a unique identification number or :ref:`uid`. Every piece of :ref:`BSA data <bsa-data>`, whether it is an image or a number, is correlated to a :ref:`uid`. Nearly 
 
 .. automodule:: E200
    :members:

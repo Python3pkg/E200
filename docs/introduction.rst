@@ -10,14 +10,14 @@ This is the documentation for the Python interface to load and analyze FACET dat
 How Datasets are Saved: DAQ
 ---------------------------
 
-At FACET, datasets are collected through use of the FACET data acquisition software typically referred to as "The DAQ." The DAQ software is written in Matlab, and triggers and collects data via EPICS. Data is stored in network attached storage (NAS) in Sector 20 at FACET, because currently the network does not support transmitting the data away from Sector 20.
+At FACET, datasets are collected through use of the FACET data acquisition software typically referred to as "The DAQ." The :ref:`DAQ <daq>` software is written in Matlab, and triggers and collects data via EPICS. Data is stored in network attached storage (NAS) in Sector 20 at FACET, because currently the network does not support transmitting the data away from Sector 20.
 
 .. _bsa-data:
 
 BSA Data
 ^^^^^^^^
 
-There are two categories of underlying data at FACET: beam-synchronous-acquired (BSA) data and non-beam-synchronous-acquired (non-BSA) data. BSA data is correlated by shots; each shot should have a unique data point for each BSA data type. Typical BSA data include, for instance: 
+There are two categories of underlying data at FACET: beam-synchronous-acquired (:ref:`BSA <bsa-data>`) data and non-beam-synchronous-acquired (:ref:`non-BSA <non-bsa-data>`) data. :ref:`BSA data <bsa-data>` is correlated by shots; each shot should have a unique data point for each :ref:`BSA data <bsa-data>` type. Typical :ref:`BSA data <bsa-data>` include, for instance: 
 
 * Images
 * Beam position monitor (BPM) data
@@ -30,7 +30,7 @@ There are two categories of underlying data at FACET: beam-synchronous-acquired 
 Non-BSA Data
 ^^^^^^^^^^^^
 
-Non-BSA data is assumed to vary slowly and remain the same over the course of the data set and is taken only once at the beginning of a set. This assumption is not tested by the software- it is theoretically possible to record a dataset for hours, and non-BSA values will not update to reflect changing conditions. Typical non-BSA data include, for instance:
+:ref:`Non-BSA data <non-bsa-data>` is assumed to vary slowly and remain the same over the course of the data set and is taken only once at the beginning of a set. This assumption is not tested by the software- it is theoretically possible to record a dataset for hours, and :ref:`non-BSA <non-bsa-data>` values will not update to reflect changing conditions. Typical :ref:`non-BSA data <non-bsa-data>` include, for instance:
 
 * Magnet power supply current values
 * Etc.
@@ -42,7 +42,7 @@ FACET saves several data types, which are linked together in a master file that 
 
 Perhaps the most important linked data are images. Cameras record images to directories in the NAS. How they record images (what cameras are used, what file format is used, where they are stored in the NAS, etc.) has changed over time and may continue to change as technical needs evolve. Due to the changing nature of images, the :mod:`E200` package is designed to account for these changes so the scientist can assume the images received need no further adjustment.
 
-BSA and non-BSA data are saved in the master file itself. This has remained fairly stable. BSA and non-BSA data tend to be scalar in nature- one single number saved for each shot or dataset respectively. There has been no need for higher-dimensional data thus far, although the DAQ has anticipated this possible eventual need.
+:ref:`BSA <bsa-data>` and :ref:`non-BSA data <non-bsa-data>` are saved in the master file itself. This has remained fairly stable. :ref:`BSA <bsa-data>` and :ref:`non-BSA data <non-bsa-data>` tend to be scalar in nature- one single number saved for each shot or dataset respectively. There has been no need for higher-dimensional data thus far, although the :ref:`DAQ <daq>` has anticipated this possible eventual need.
 
 .. _master-file-type:
 
