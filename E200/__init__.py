@@ -21,8 +21,8 @@ from .E200_api_getUID import E200_api_getUID         # noqa
 from .E200_api_getdat import *                       # noqa
 from .E200_api_updateUID import *                    # noqa
 from .E200_dataset2str import *                      # noqa
-from .eaxis import *                                 # noqa
-from .eaxis_class import *                           # noqa
+# from .eaxis import *                                 # noqa
+# from .eaxis_class import *                           # noqa
 # from eaxis import eaxis
 # from eaxis import eaxis_ELANEX
 # from eaxis import yaxis_ELANEX

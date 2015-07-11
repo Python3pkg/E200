@@ -6,12 +6,10 @@ import PIL
 import logging
 import os as _os
 on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import re as _np
-else:
+if not on_rtd:
     import numpy as _np
+    import scipy.io as _spio
 import os
-import scipy.io as _spio
 loggerlevel = logging.DEBUG
 logger      = logging.getLogger(__name__)
 
