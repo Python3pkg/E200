@@ -1,4 +1,9 @@
-import numpy as _np
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    import re as _np
+else:
+    import numpy as _np
 
 
 def set_QS_energy_ELANEX(E):
