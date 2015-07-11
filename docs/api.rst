@@ -28,7 +28,7 @@ The file path picked is then passed through to :func:`E200.E200_load_data`. This
 Drill Data Class
 ----------------
 
-It becomes immediately obvious that loaded data is returned in the form of the class :class:`E200.classes.Drill`. The dataset's nested dictionary as returned from `h5py <http://www.h5py.org/>`_ is given by::
+It becomes immediately obvious that loaded data is returned in the form of the class :class:`E200.Drill`. The dataset's nested dictionary as returned from `h5py <http://www.h5py.org/>`_ is given by::
 
         data.read_file
 
@@ -40,7 +40,7 @@ It is cumbersome to find all of the nested dictionaries, as `tab completion <htt
 Top Data Level
 ^^^^^^^^^^^^^^
 
-The :class:`E200.classes.Drill` class anticipates this problem: it is far simpler to enter::
+The :class:`E200.Drill` class anticipates this problem: it is far simpler to enter::
 
         >>> data.rdrill.data
         <E200.E200_load_data.Drill with keys:
@@ -130,11 +130,11 @@ The most obvious way to use :ref:`UIDs <uid>` is to create a master index of the
         >>> dat_step_num.dat
         array([ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.])
 
-Note: it's important to take the intersection. Without intersecting, it is impossible to be sure that the :ref:`UIDs <uid>` will exist for ``step_num`` and ``step_value``. The API function :func:`E200.E200_api_getdat` is designed to mitigate this problem by returning an instance of the class :class:`E200.E200_Dat.E200_Dat`. This class has members:
+Note: it's important to take the intersection. Without intersecting, it is impossible to be sure that the :ref:`UIDs <uid>` will exist for ``step_num`` and ``step_value``. The API function :func:`E200.E200_api_getdat` is designed to mitigate this problem by returning an instance of the class :class:`E200.E200_Dat`. This class has members:
 
-* :data:`E200.E200_Dat.E200_Dat.field`: The field retrieved (usually ``dat``)
-* :data:`E200.E200_Dat.E200_Dat.uid`: The :ref:`UIDs <uid>` retrieved
-* :data:`E200.E200_Dat.E200_Dat.dat`: The data retrieved, correlated by position to :ref:`uid`.
+* :data:`E200.E200_Dat.field`: The field retrieved (usually ``dat``)
+* :data:`E200.E200_Dat.uid`: The :ref:`UIDs <uid>` retrieved
+* :data:`E200.E200_Dat.dat`: The data retrieved, correlated by position to :ref:`uid`.
 
 Selecting Data by Value
 -----------------------
@@ -186,7 +186,7 @@ Loading images is special, as images aren't stored directly in the :ref:`master 
    :width: 300 pt
    :align: left
 
-The class :class:`E200.classes.E200_Image` has several members. The one of interest are:
+The class :class:`E200.E200_Image` has several members. The one of interest are:
 
 * ``UID`` or ``uid``: An array of the :ref:`UIDs <uid>` available
 * ``images``: An array of images
