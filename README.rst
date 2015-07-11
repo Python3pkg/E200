@@ -10,7 +10,7 @@ Installation
 
 To install, download, and in the main directory run:
 
-        pip install
+        pip install E200
 
 Source Code
 -----------

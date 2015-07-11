@@ -4,14 +4,20 @@ if not on_rtd:
     import numpy as _np
     from PyQt4 import QtGui
     import scisalt.qt as mtqt
-import configparser as ConfigParser
-import inspect
+import configparser as _ConfigParser
+import inspect as _inspect
+import logging as _logging
+import subprocess as _subprocess
+import shlex as _shlex
+from .get_matlab import get_matlab
+
+logger = _logging.getLogger(__name__)
 
 __all__    = ['get_remoteprefix', 'set_remoteprefix', 'choose_remoteprefix', '_get_configpath', '_get_directory', '_get_datapath']
 def_prefix = '/Volumes/PWFA_4big'
 
 
-def choose_remoteprefix(pathstart=def_prefix, verbose=True):
+def choose_remoteprefix(pathstart=def_prefix):
     app = mtqt.get_app()  # NOQA
     if not os.path.isdir(pathstart):
         pathstart = '/'
@@ -21,8 +27,7 @@ def choose_remoteprefix(pathstart=def_prefix, verbose=True):
 
     prefix = _test_prefix(prefix)
 
-    if verbose:
-        print('New prefix is: {}'.format(prefix))
+    logger.info('New prefix is: {}'.format(prefix))
 
     return prefix
 
@@ -39,7 +44,7 @@ def get_remoteprefix():
     # =====================================
     # Try to read the prefix
     # =====================================
-    config = ConfigParser.ConfigParser()
+    config = _ConfigParser.ConfigParser()
     try:
         config.read(config_path)
         prefix = config.get('Prefs', 'prefix')
@@ -82,7 +87,7 @@ def _test_prefix(prefix):
         clicked = buttonbox.clickedArray
         # Locate folder...
         if clicked[1]:
-            prefix = choose_remoteprefix(verbose=False)
+            prefix = choose_remoteprefix()
         elif clicked[2]:
             raise IOError('No valid directory chosen.')
 
@@ -90,8 +95,8 @@ def _test_prefix(prefix):
     return prefix
 
 
-def set_remoteprefix(prefix, verbose=False):
-    config = ConfigParser.ConfigParser()
+def set_remoteprefix(prefix):
+    config = _ConfigParser.ConfigParser()
     try:
         config.add_section('Prefs')
     except:
@@ -100,12 +105,17 @@ def set_remoteprefix(prefix, verbose=False):
     config.set('Prefs', 'prefix', prefix)
     with open(_get_configpath(), 'wt') as configfile:
         config.write(configfile)
-    if verbose:
-        print('Remote prefix now: {}'.format(get_remoteprefix()))
+
+    matlab = get_matlab()
+    command = '{matlab} -r "setpref(\'FACET_data\',\'prefix\',{prefix});exit;"'.format(matlab=matlab, prefix=prefix)
+
+    _subprocess.call(_shlex.split(command))
+
+    logger.info('Remote prefix now: {}'.format(get_remoteprefix()))
 
 
 def _get_configpath():
-    this_path   = inspect.stack()[0][1]
+    this_path   = _inspect.stack()[0][1]
     this_dir    = os.path.dirname(this_path)
     config_path = os.path.join(this_dir, 'FACET_data.cfg')
 

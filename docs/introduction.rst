@@ -62,6 +62,19 @@ Python 3
 
 :mod:`E200` works with Python 3 and up, which should be installed via apt-get on \*nix, `Macports <https://www.macports.org/>`_ on Apple machines, or downloaded from https://www.python.org/downloads/.
 
+Matlab
+^^^^^^
+
+:mod:`E200` requires `Matlab <http://www.mathworks.com/products/matlab/>`_ in order to translate `Matlab <http://www.mathworks.com/products/matlab/>`_ files to HDF5. Currently this is accomplished through the `E200_data software <https://github.com/aard-pwfa/E200_data>`_.
+
+#. `Install Matlab <http://www.mathworks.com/support/install-matlab.html>`_
+#. Download `E200_data software <https://github.com/aard-pwfa/E200_data>`_
+
+   * Git: ``git clone git@github.com:aard-pwfa/E200_data.git``
+   * Direct download: https://github.com/aard-pwfa/E200_data/archive/master.zip
+
+#. Add downloaded software to the `Matlab path <http://www.mathworks.com/help/matlab/matlab_env/what-is-the-matlab-search-path.html#btqi_c6>`_
+
 NumPy
 ^^^^^
 
