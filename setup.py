@@ -71,9 +71,13 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['numpy',
+    install_requires=[
+        'numpy',
         'Pillow>=2.8.1',
         'SciSalt',
+        'h5py',
+        'PyQt4',
+        'pillow',
         ],
 
     # List additional groups of dependencies here (e.g. development
