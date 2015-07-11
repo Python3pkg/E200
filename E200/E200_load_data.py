@@ -7,18 +7,18 @@ import os as _os
 on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
     import h5py as _h5
-import shlex
-import subprocess
-import tempfile
+import shlex as _shlex
+import subprocess as _subprocess
+import tempfile as _tempfile
 loggerlevel = logging.DEBUG
 logger      = logging.getLogger(__name__)
 
 __all__ = ['E200_load_data']
 
 
-def E200_load_data(filename, savefile=None):
+def E200_load_data(filename, savefile=None, matlab_verbose=False):
     """
-    Loads  dataset file where *filename* is a :code:`str` of the relative location of the file (i.e. ``nas/nas-li20-pm00/E200/2015/20150602/E200_17712``). If specified, saves the intermediate h5py file to *savefile*.
+    Loads  dataset file where *filename* is a :code:`str` of the relative location of the file (i.e. ``nas/nas-li20-pm00/E200/2015/20150602/E200_17712``). If specified, saves the intermediate h5py file to *savefile*. *matlab_verbose* determines whether Matlab's output while loading the file is printed to the terminal.
 
     Returns an instance of :class:`E200.Data`.
 
@@ -30,26 +30,31 @@ def E200_load_data(filename, savefile=None):
     # Create temporary directory
     # ======================================
     if savefile is None:
-        with tempfile.TemporaryDirectory() as tempdir:
+        with _tempfile.TemporaryDirectory() as tempdir:
             tempfilename = 'temp.h5'
-            temppath = _os.path.join(tempdir, tempfilename)
-            return _process_file(filename=filename, temppath=temppath)
+            temppath     = _os.path.join(tempdir, tempfilename)
+            return _process_file(filename=filename, temppath=temppath, matlab_verbose=matlab_verbose)
     else:
-        return _process_file(filename=filename, temppath=savefile)
+        return _process_file(filename=filename, temppath=savefile, matlab_verbose=matlab_verbose)
 
 
-def _process_file(filename, temppath):
+def _process_file(filename, temppath, matlab_verbose):
     # ======================================
     # Have matlab process file
     # ======================================
     logger.log(level=loggerlevel, msg='Processed file not found, calling matlab to process file.')
-    pwd = _os.getcwd()
-    matlab = get_matlab()
-    curdir = _os.path.dirname(_os.path.realpath(__file__))
-    command = '{matlab} -r "addpath(fullfile(\'{curdir}\',\'matlab\'));convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, curdir=curdir, pwd=pwd, filename=filename, outfile=temppath)
+    pwd           = _os.getcwd()
+    matlab        = get_matlab()
+    curdir        = _os.path.dirname(_os.path.realpath(__file__))
+    command       = '{matlab} -r "addpath(fullfile(\'{curdir}\',\'matlab\'));convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, curdir=curdir, pwd=pwd, filename=filename, outfile=temppath)
+    command_split = _shlex.split(command)
     
     logger.log(level=loggerlevel, msg='Command given is: {}'.format(command))
-    subprocess.call(shlex.split(command))
+    if matlab_verbose:
+        fnull = open(_os.devnull, 'w')
+        _subprocess.call(command_split, stdout=fnull)
+    else:
+        _subprocess.call(command_split)
 
     # ======================================
     # Load file processed by matlab

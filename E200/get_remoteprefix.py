@@ -1,9 +1,11 @@
-import os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+import sys as _sys
+import os as _os
+on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
     import numpy as _np
     from PyQt4 import QtGui
     import scisalt.qt as mtqt
+
 import configparser as _ConfigParser
 import inspect as _inspect
 import logging as _logging
@@ -19,15 +21,15 @@ def_prefix = '/Volumes/PWFA_4big'
 
 def choose_remoteprefix(pathstart=def_prefix):
     app = mtqt.get_app()  # NOQA
-    if not os.path.isdir(pathstart):
-        pathstart = '/'
+    if not _os.path.isdir(pathstart):
+        pathstart = _os.environ.get('HOME', _os.path.abspath(_os.sep))
     prefix = mtqt.getExistingDirectory(caption='Change prefix', directory=pathstart)
-    if not os.path.isdir(prefix):
+    if not _os.path.isdir(prefix):
+        logger.critical('No directory selected: terminating.')
         raise IOError('No directory selected.')
 
     prefix = _test_prefix(prefix)
-
-    logger.info('New prefix is: {}'.format(prefix))
+    set_remoteprefix(prefix)
 
     return prefix
 
@@ -63,13 +65,13 @@ def get_remoteprefix():
 def _get_datapath(prefix=None):
     if prefix is None:
         prefix = get_remoteprefix()
-    datapath = os.path.join(prefix, 'nas', 'nas-li20-pm00')
+    datapath = _os.path.join(prefix, 'nas', 'nas-li20-pm00')
     return datapath
 
 
 def _nas_in_path(prefix):
     datapath = _get_datapath(prefix)
-    return os.path.isdir(datapath)
+    return _os.path.isdir(datapath)
 
 
 def _test_prefix(prefix):
@@ -89,9 +91,9 @@ def _test_prefix(prefix):
         if clicked[1]:
             prefix = choose_remoteprefix()
         elif clicked[2]:
+            logger.critical('No valid directory chosen: terminating.')
             raise IOError('No valid directory chosen.')
 
-    set_remoteprefix(prefix)
     return prefix
 
 
@@ -107,17 +109,20 @@ def set_remoteprefix(prefix):
         config.write(configfile)
 
     matlab = get_matlab()
-    command = '{matlab} -r "setpref(\'FACET_data\',\'prefix\',{prefix});exit;"'.format(matlab=matlab, prefix=prefix)
+    command = '{matlab} -r "setpref(\'FACET_data\',\'prefix\',\'{prefix}\');exit;"'.format(matlab=matlab, prefix=prefix)
 
-    _subprocess.call(_shlex.split(command))
+    logger.info('Setting remote prefix in Matlab: {}'.format(prefix))
 
-    logger.info('Remote prefix now: {}'.format(get_remoteprefix()))
+    fnull = open(_os.devnull, 'w')
+    _subprocess.call(_shlex.split(command), stdout=fnull, stderr=_subprocess.STDOUT)
+
+    logger.info('Remote prefix now: {}'.format(prefix))
 
 
 def _get_configpath():
     this_path   = _inspect.stack()[0][1]
-    this_dir    = os.path.dirname(this_path)
-    config_path = os.path.join(this_dir, 'FACET_data.cfg')
+    this_dir    = _os.path.dirname(this_path)
+    config_path = _os.path.join(this_dir, 'FACET_data.cfg')
 
     return config_path
 
