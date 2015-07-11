@@ -25,6 +25,9 @@ There are two categories of underlying data at FACET: beam-synchronous-acquired 
 * Toroid data
 * Etc.
 
+Background data is typically acquired for images at the beginning of a dataset and can be loaded alongside images.
+
+
 .. _non-bsa-data:
 
 Non-BSA Data
@@ -58,6 +61,11 @@ Python 3
 ^^^^^^^^
 
 :mod:`E200` works with Python 3 and up, which should be installed via apt-get on \*nix, `Macports <https://www.macports.org/>`_ on Apple machines, or downloaded from https://www.python.org/downloads/.
+
+NumPy
+^^^^^
+
+:mod:`E200` depends on `NumPy <http://www.numpy.org/>`_ to manipulate data. `NumPy <http://www.numpy.org/>`_ has dependencies such as BLAS, LAPACK, and ATLAS, which makes downloading building form source is difficult. Installation via apt-get or `Macports <https://www.macports.org/>`_ is highly recommended in order to handle these dependencies. It is possible to `download <http://www.scipy.org/scipylib/download.html>`_ or to `build from source <http://www.scipy.org/scipylib/building/index.html#building>`_.
 
 PyQt4
 ^^^^^
@@ -148,18 +156,19 @@ Load Data
 
 The simplest and most-accessible way to load datasets is to use :meth:`~E200.E200_load_data_gui`::
 
-        import E200
-        data = E200.E200_load_data_gui()
+        >>> import E200
+        >>> data = E200.E200_load_data_gui()
 
 If you have not loaded data before, you may be prompted to locate the ``nas`` folder.
 
 Once loaded, a dataset can be displayed::
 
-        camera = data.rdrill.data.raw.images.CMOS_ELAN
-        uid = camera.UID[0]
-        images = E200.E200_load_images(camera, uid)
-        plt.imshow(images.images[0])
-        plt.show()
+        >>> camera = data.rdrill.data.raw.images.CMOS_ELAN
+        >>> uid = camera.UID[0]
+        >>> images = E200.E200_load_images(camera, uid)
+        >>> plt.imshow(images.images[0])
+        <matplotlib.image.AxesImage object at 0x105e9c080>
+        >>> plt.show()
 
 (Note that this assumes the dataset recorded camera ``CMOS_ELAN``.) In OS X this opens a window:
 

@@ -11,7 +11,16 @@ logger = logging.getLogger(__name__)
 
 def E200_load_data_gui(experiment=None, verbose=False):
     """
-    Allows user to select dataset file to load. 
+    Allows user to select a dataset file to load via a GUI file picker.
+
+    If *experiment* (type :code:`str`) is specified, the GUI defaults to the last saved dataset from *experiment*. Typical options are:
+
+    * :code:`'E200'`
+    * :code:`'E217'`
+
+    Returns an instance of :class:`E200.Data`.
+
+    *Note: this function calls Matlab code; it is not surprising to see Matlab open in the terminal.*
     """
     if experiment is not None:
         recent = 'nas/nas-li20-pm00/{}'.format(experiment)

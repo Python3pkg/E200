@@ -10,7 +10,12 @@ logger = logging.getLogger(__name__)
 # Image iterator
 # ======================================
 class E200_Image_Iter(object):
-    def __init__(self, imgstr, uids=None, numperset=None):
+    """
+    Iterable object for use in embedding in :code:`for` loops to prevent running out of memory. Loads available images from *img_dataset* (type :class:`E200.Drill` containing camera data). If *UID* is present, only loads matching UIDs. Loads *numperset* images at a time.
+
+    *(Note: Can and should be used directly!)*
+    """
+    def __init__(self, img_dataset, UID=None, numperset=None):
         # ======================================
         # Check platform (only facet-srvs have
         # major memory issues)
@@ -25,9 +30,9 @@ class E200_Image_Iter(object):
         # Initialize requested iterator
         # ======================================
         self._numperset = numperset
-        self._imgstr    = imgstr
-        self._uids      = uids
-        self._uids_orig = uids
+        self._imgstr    = img_dataset
+        self._uids      = UID
+        self._uids_orig = UID
 
     def __iter__(self):
         # ======================================
@@ -37,13 +42,13 @@ class E200_Image_Iter(object):
         if self._uids is None:
             self._uids = self._imgstr.UID
 
-        self.load_next_batch()
+        self._load_next_batch()
 
         return self
 
     def __next__(self):
         if self._imgs_ind >= self._num_uids_load:
-            self.load_next_batch()
+            self._load_next_batch()
 
         img   = _np.array([self._images.images[self._imgs_ind]])
         dat   = _np.array([self._images.dat[self._imgs_ind]])
@@ -55,7 +60,7 @@ class E200_Image_Iter(object):
         self._imgs_ind = self._imgs_ind + 1
         return out
 
-    def load_next_batch(self):
+    def _load_next_batch(self):
             # ======================================
             # Load only up to the next batch avail.
             # uids to prevent memory overflow

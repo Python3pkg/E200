@@ -14,7 +14,14 @@ logger      = logging.getLogger(__name__)
 __all__ = ['E200_load_data']
 
 
-def E200_load_data(filename, savefile=None, verbose = False, local = False):
+def E200_load_data(filename, savefile=None):
+    """
+    Loads  dataset file where *filename* is a :code:`str` of the relative location of the file (i.e. ``nas/nas-li20-pm00/E200/2015/20150602/E200_17712``). If specified, saves the intermediate h5py file to *savefile*.
+
+    Returns an instance of :class:`E200.Data`.
+
+    *Note: this function calls Matlab code; it is not surprising to see Matlab open in the terminal.*
+    """
     logger.log(level = loggerlevel, msg = 'Input is: filename={}'.format(filename))
 
     # ======================================

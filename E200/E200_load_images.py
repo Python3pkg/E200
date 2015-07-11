@@ -11,10 +11,15 @@ loggerlevel = logging.DEBUG
 logger      = logging.getLogger(__name__)
 
 
-def E200_load_images(imgstr, UID=None):
+def E200_load_images(img_dataset, UID=None):
+    """
+    Loads available images from *img_dataset* (type :class:`E200.Drill` containing camera data) corresponding to *UID* (:code:`array` or number).
+
+    Returns an instance of :class:`E200.E200_Image`.
+    """
     logger.log(level=loggerlevel, msg='Loading images...')
     try:
-        remote_bool = imgstr._hdf5.file['data']['VersionInfo']['remotefiles']['dat'][0, 0]
+        remote_bool = img_dataset._hdf5.file['data']['VersionInfo']['remotefiles']['dat'][0, 0]
     except:
         remote_bool = True
     if remote_bool:
@@ -22,7 +27,7 @@ def E200_load_images(imgstr, UID=None):
     else:
         prefix = ''
 
-    imgdat = E200_api_getdat(imgstr, UID=UID)
+    imgdat = E200_api_getdat(img_dataset, UID=UID)
 
     imgs = _np.array([PIL.Image.open(os.path.join(prefix, val[1:])) for val in imgdat.dat], dtype=object)
     num_imgs = _np.size(imgs)
@@ -34,7 +39,7 @@ def E200_load_images(imgstr, UID=None):
 
     logger.log(level=loggerlevel, msg='Loading backgrounds...')
 
-    imgbgdat = E200_api_getdat(imgstr, fieldname='background_dat', UID=imgdat.uid)
+    imgbgdat = E200_api_getdat(img_dataset, fieldname='background_dat', UID=imgdat.uid)
 
     # for i, val in enumerate(imgbgdat.dat):
     # print val

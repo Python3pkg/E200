@@ -4,14 +4,19 @@ from . import classes
 from scisalt.convertH5ref import convertH5ref as _convertH5ref
 
 
-def E200_api_getUID(struct, val, f=None):
-    if type(struct) == classes.Drill:
-        struct = struct._hdf5
+def E200_api_getUID(dataset, val, f=None):
+    """
+    Return all UIDs where *val* is equal to the value of the ``dat`` member of *dataset* (which must be either an :class:`E200.Drill` or an :class:`h5py.Group` class).
+
+    Returns an ``array`` of UIDs.
+    """
+    if type(dataset) == classes.Drill:
+        dataset = dataset._hdf5
         
     if f is None:
-        f = struct.file
-    uids = struct['UID']
-    vals = struct['dat']
+        f = dataset.file
+    uids = dataset['UID']
+    vals = dataset['dat']
 
     uids = uids[:, 0]
     try:
@@ -19,4 +24,4 @@ def E200_api_getUID(struct, val, f=None):
     except:
         vals = _np.array(vals).flatten()
 
-    return uids[vals == val]
+    return uids[vals == UID]

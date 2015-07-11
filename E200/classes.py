@@ -9,11 +9,10 @@ __all__ = ['Data', 'Drill', 'E200_Dat', 'E200_Image']
 
 class Data(object):
     """
-    This
-    """
-    def __enter__(self):
-        return self
+    Top-level data file representing all information for a single dataset loaded from *filename*. *read_file* (type :class:`h5py._hl.files.File`, an h5py file) is the loaded data, to be read-only.
 
+    **Should not be created directly, only accessed through** :func:`E200.E200_load_data` **or** :func:`E200.E200_load_data_gui`\ **.**
+    """
     def __init__(self, read_file, filename=None):
         self._filename = filename
         self.read_file = read_file
@@ -22,15 +21,27 @@ class Data(object):
         # self.data=datalevel()
         # recursivePopulate(self._data, self)
 
+    def __enter__(self):
+        return self
+
     @property
     def filename(self):
+        """
+        The *filename* the dataset was loaded with.
+        """
         return self._filename
 
     @property
     def loadname(self):
+        """
+        The name of the dataset (i.e. :code:`'E217_17990'`).
+        """
         return _os.path.splitext(_os.path.basename(self.filename))[0]
 
     def close(self):
+        """
+        Closes the *read_file*
+        """
         self.read_file.close()
 
     def __exit__(self, type, value, traceback):
@@ -38,6 +49,13 @@ class Data(object):
 
 
 class Drill(object):
+    """
+    Designed for representing hierarchical h5py data. *data* (type :class:`h5py._hl.files.File`, an h5py file) is the h5py file at a particular hierarchical depth.
+
+    Members: If not nested :class:`E200.Drill` objects, they may be arrays representing various types of information particular to their parent.
+    
+    **Should not be created directly, only accessed through** :func:`E200.E200_load_data` **or** :func:`E200.E200_load_data_gui`\ **.**
+    """
     def __init__(self, data):
         self._hdf5 = data
         #  self._mydir = []
@@ -89,6 +107,13 @@ class Drill(object):
 
 
 class E200_Image(E200_Dat):
+    """
+    Bases: :class:`E200.E200_Dat`
+
+    Contains image data. This is designed to prevent accidental incorrect correlation of images with UIDs, in case a request for images cannot find UIDs.
+
+    **Should not be created directly, only accessed through** :func:`E200.E200_load_images`\ **.**
+    """
     def __init__(self, images, dat, uid, timestamps, image_backgrounds=None):
         self._imgs_subbed = None
 
@@ -98,16 +123,25 @@ class E200_Image(E200_Dat):
         self._image_backgrounds = image_backgrounds
         self._timestamps        = timestamps
 
-    def _get_images(self):
+    @property
+    def images(self):
+        """
+        An array of images, correlated with :attr:`E200.E200_Image.UID`.
+        """
         return self._images
-    images = property(_get_images)
 
-    def _get_image_backgrounds(self):
+    @property
+    def image_backgrounds(self):
+        """
+        An array of image backgrounds,  correlated with :attr:`E200.E200_Image.UID`.
+        """
         return self._image_backgrounds
-    image_backgrounds = property(_get_image_backgrounds)
 
     @property
     def imgs_subbed(self):
+        """
+        An array of images with backgrounds subtracted,  correlated with :attr:`E200.E200_Image.UID`.
+        """
         if self._imgs_subbed is None:
             self._imgs_subbed = self.images - 2*_np.fliplr(self.image_backgrounds)
         
@@ -115,4 +149,7 @@ class E200_Image(E200_Dat):
 
     @property
     def timestamps(self):
+        """
+        An array of timestamps indicating when :attr:`E200.E200_Image.images` were taken, correlated with :attr:`E200.E200_Image.UID`.
+        """
         return self._timestamps

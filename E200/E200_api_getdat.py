@@ -12,7 +12,12 @@ def _numarray2str(numarray):
     return string
 
 
-def E200_api_getdat(dataset, UID=None, fieldname='dat', verbose=False):
+def E200_api_getdat(dataset, UID=None, fieldname='dat'):
+    """
+    Load data from a *dataset*, which must be either an :class:`E200.Drill` or an :class:`h5py.Group` class. If no *UID* is given, all available UIDs are loaded. The *fieldname* determines which member is loaded from the *dataset*.
+
+    Returns an instance of :class:`E200.E200_Dat`.
+    """
     if type(dataset) != h5.Group:
             dataset = dataset._hdf5
 
