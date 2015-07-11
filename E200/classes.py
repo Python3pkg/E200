@@ -2,9 +2,10 @@ import os as _os
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     import re as _np
+    import re as _h5
 else:
     import numpy as _np
-import h5py as _h5
+    import h5py as _h5
 from .E200_api_getdat import E200_api_getdat
 from .E200_Dat import *                        # noqa
 

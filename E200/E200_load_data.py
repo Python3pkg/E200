@@ -2,9 +2,13 @@ from .E200_dataset2str import *     # NOQA
 from .classes import *              # NOQA
 from .get_valid_filename import *   # NOQA
 from .get_matlab import get_matlab
-import h5py as _h5
 import logging
 import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    import re as _h5
+else:
+    import h5py as _h5
 import shlex
 import subprocess
 import tempfile
