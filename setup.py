@@ -76,7 +76,6 @@ setup(
         'Pillow>=2.8.1',
         'SciSalt',
         'h5py',
-        'PyQt4',
         'pillow',
         ],
 
