@@ -1,12 +1,10 @@
-import os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import re as _np
-else:
+import os as _os
+on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
+if not on_rtd:
     import numpy as _np
+    from scisalt.convertH5ref import convertH5ref as _convertH5ref
 from . import classes
 # from convertH5ref import convertH5ref as _convertH5ref
-from scisalt.convertH5ref import convertH5ref as _convertH5ref
 
 
 def E200_api_getUID(dataset, val, f=None):
