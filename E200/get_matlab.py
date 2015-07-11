@@ -1,6 +1,8 @@
 import glob
-import numpy as np
-import os
+import os as _os
+on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
+if not on_rtd:
+    import numpy as np
 import platform
 import logging
 logger = logging.getLogger(__name__)
@@ -19,8 +21,8 @@ def get_matlab(display=False, splash=False):
             logger.warning('Multiple matlabs found!')
         matlab_base = matlabs[0]
     elif system == 'Linux':
-        home = os.environ['HOME']
-        matlab_base = os.path.join(home, 'Matlab/bin/./matlab')
+        home = _os.environ['HOME']
+        matlab_base = _os.path.join(home, 'Matlab/bin/./matlab')
        
     options = ''
     if not display:
