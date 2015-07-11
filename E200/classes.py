@@ -1,5 +1,5 @@
 import os as _os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     import re as _np
     import re as _h5

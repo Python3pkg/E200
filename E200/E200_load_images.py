@@ -4,7 +4,8 @@ from .classes import *  # NOQA
 from .get_remoteprefix import get_remoteprefix
 import PIL
 import logging
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+import os as _os
+on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     import re as _np
 else:
