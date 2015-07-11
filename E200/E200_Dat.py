@@ -1,5 +1,11 @@
 import inspect as _ins
-import numpy as _np
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    import re as _np
+else:
+    import numpy as _np
+
 
 __all__ = ['E200_Dat']
 
