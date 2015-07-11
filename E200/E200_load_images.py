@@ -4,7 +4,11 @@ from .classes import *  # NOQA
 from .get_remoteprefix import get_remoteprefix
 import PIL
 import logging
-import numpy as _np
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    import re as _np
+else:
+    import numpy as _np
 import os
 import scipy.io as _spio
 loggerlevel = logging.DEBUG

@@ -1,4 +1,9 @@
-import numpy as _np
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    import re as _np
+else:
+    import numpy as _np
 import h5py as h5
 import logging
 logger = logging.getLogger(__name__)

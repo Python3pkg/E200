@@ -6,7 +6,12 @@ logger      = logging.getLogger(__name__)
 from .get_remoteprefix import *  # NOQA
 from PyQt4 import QtGui as _QtGui
 from glob import glob as _glob
-import numpy as _np
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    import re as _np
+else:
+    import numpy as _np
 import os.path as _path
 import scisalt as _mt
 import scisalt.qt as _mtqt

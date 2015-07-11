@@ -1,4 +1,9 @@
-import numpy as _np
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    import re as _np
+else:
+    import numpy as _np
 from . import classes
 # from convertH5ref import convertH5ref as _convertH5ref
 from scisalt.convertH5ref import convertH5ref as _convertH5ref
