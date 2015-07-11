@@ -1,9 +1,11 @@
 from .E200_load_data import E200_load_data
 from .get_remoteprefix import get_remoteprefix
-import PyQt4.QtGui as QtGui
 import glob
-import os
-import scisalt as pt
+import os as _os
+on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
+if not on_rtd:
+    import PyQt4.QtGui as QtGui
+    import scisalt as pt
 import re
 import logging
 logger = logging.getLogger(__name__)
@@ -31,10 +33,10 @@ def E200_load_data_gui(experiment=None, verbose=False):
     # Get most recent folder
     # ======================================
     pref = get_remoteprefix()
-    temppath = os.path.join(pref, recent)
-    temppath = max(glob.glob(os.path.join(temppath, '*')), key=os.path.getmtime)
-    temppath = max(glob.glob(os.path.join(temppath, '*')), key=os.path.getmtime)
-    temppath = max(glob.glob(os.path.join(temppath, '*')), key=os.path.getmtime)
+    temppath = _os.path.join(pref, recent)
+    temppath = max(glob.glob(_os.path.join(temppath, '*')), key=_os.path.getmtime)
+    temppath = max(glob.glob(_os.path.join(temppath, '*')), key=_os.path.getmtime)
+    temppath = max(glob.glob(_os.path.join(temppath, '*')), key=_os.path.getmtime)
 
     # ======================================
     # User selects file

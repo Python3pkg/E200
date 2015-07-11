@@ -2,13 +2,13 @@
 
 import mytools as mt
 import mytools.qt as myqt
-from PyQt4 import QtGui,QtCore
 import os
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     import re as h5
 else:
     import h5py as h5
+    from PyQt4 import QtGui,QtCore
 import numpy as np
 import ButterflyEmittancePython as bt
 import matplotlib.pyplot as plt

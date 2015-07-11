@@ -3,11 +3,9 @@ from .classes import *              # NOQA
 from .get_valid_filename import *   # NOQA
 from .get_matlab import get_matlab
 import logging
-import os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import re as _h5
-else:
+import os as _os
+on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
+if not on_rtd:
     import h5py as _h5
 import shlex
 import subprocess
@@ -34,7 +32,7 @@ def E200_load_data(filename, savefile=None):
     if savefile is None:
         with tempfile.TemporaryDirectory() as tempdir:
             tempfilename = 'temp.h5'
-            temppath = os.path.join(tempdir, tempfilename)
+            temppath = _os.path.join(tempdir, tempfilename)
             return _process_file(filename=filename, temppath=temppath)
     else:
         return _process_file(filename=filename, temppath=savefile)
@@ -45,9 +43,9 @@ def _process_file(filename, temppath):
     # Have matlab process file
     # ======================================
     logger.log(level=loggerlevel, msg='Processed file not found, calling matlab to process file.')
-    pwd = os.getcwd()
+    pwd = _os.getcwd()
     matlab = get_matlab()
-    curdir = os.path.dirname(os.path.realpath(__file__))
+    curdir = _os.path.dirname(_os.path.realpath(__file__))
     command = '{matlab} -r "addpath(\'{curdir}\');convert_mat_file(\'{filename}\',\'{outfile}\');exit;"'.format(matlab=matlab, curdir=curdir, pwd=pwd, filename=filename, outfile=temppath)
     
     logger.log(level=loggerlevel, msg='Command given is: {}'.format(command))

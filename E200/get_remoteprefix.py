@@ -1,13 +1,11 @@
 import os
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import re as _np
-else:
+if not on_rtd:
     import numpy as _np
+    from PyQt4 import QtGui
+    import scisalt.qt as mtqt
 import configparser as ConfigParser
 import inspect
-from PyQt4 import QtGui
-import scisalt.qt as mtqt
 
 __all__    = ['get_remoteprefix', 'set_remoteprefix', 'choose_remoteprefix', '_get_configpath', '_get_directory', '_get_datapath']
 def_prefix = '/Volumes/PWFA_4big'

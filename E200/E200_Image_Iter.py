@@ -1,8 +1,6 @@
 import os
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import re as _np
-else:
+if not on_rtd:
     import numpy as _np
 from .E200_load_images import E200_load_images
 from .get_matlab import is_facet_srv
