@@ -72,11 +72,11 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        'numpy',
         'Pillow>=2.8.1',
         'SciSalt',
         'h5py',
-        'pillow',
+        'numpy',
+        'scipy',
         ],
 
     # List additional groups of dependencies here (e.g. development
