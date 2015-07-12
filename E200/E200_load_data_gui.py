@@ -5,7 +5,7 @@ import os as _os
 on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
     import PyQt4.QtGui as QtGui
-    import scisalt as pt
+    import scisalt.qt as _qt
 import re
 import logging
 logger = logging.getLogger(__name__)
@@ -41,11 +41,11 @@ def E200_load_data_gui(experiment=None, verbose=False):
     # ======================================
     # User selects file
     # ======================================
-    app = pt.qt.get_app()  # NOQA
+    app = _qt.get_app()  # NOQA
     loadfile = QtGui.QFileDialog.getOpenFileName(directory=temppath, filter='*.mat')
     if loadfile == '':
-        input('No file chosen, press enter to close...')
-        return
+        logger.critical('No file chosen')
+        raise IOError('No file chosen')
     loadfile  = loadfile[1:]
     p         = re.compile('nas/nas.*')
     loadmatch = p.search(loadfile)

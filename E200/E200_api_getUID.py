@@ -2,9 +2,7 @@ import os as _os
 on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
     import numpy as _np
-    from scisalt.convertH5ref import convertH5ref as _convertH5ref
 from . import classes
-# from convertH5ref import convertH5ref as _convertH5ref
 
 
 def E200_api_getUID(dataset, val, f=None):
@@ -23,8 +21,18 @@ def E200_api_getUID(dataset, val, f=None):
 
     uids = uids[:, 0]
     try:
-        vals = _convertH5ref(vals, f)
+        vals = convertH5ref(vals, f)
     except:
         vals = _np.array(vals).flatten()
 
-    return uids[vals == UID]
+    return uids[vals == val]
+
+def convertH5ref(dataset, f):
+    """
+    Dereferences *dataset* of type :mod:`h5py._hl.files.File` using file *f*
+    """
+    vals = _np.array([])
+    for ref in dataset[:, 0]:
+        vals = _np.append(vals, f[ref])
+
+    return vals

@@ -63,10 +63,8 @@ class Drill(object):
     """
     def __init__(self, data):
         self._hdf5 = data
-        #  self._mydir = []
         for key in data.keys():
             if key[0] != '#':
-                #  self._mydir.append(key)
                 out = data[key]
                 if type(out) == _h5._hl.group.Group:
                     setattr(self, key, Drill(out))
@@ -85,20 +83,6 @@ class Drill(object):
                     setattr(self, key, out)
                 elif key == 'UID':
                     setattr(self, key, out.value)
-                #  elif type(out) == _h5._hl.dataset.Dataset:
-                #          if
-                #          if out[0][0]==_h5.h5r.Reference:
-                #                  vals=[out.file[val[0]] for val in out]
-                #          else:
-                #                  vals = [val for val in out]
-                #          if vals[0].shape[0]>1:
-                #                  vals = [np.array(val).flatten() for val in vals]
-                #                  vals = [''.join(vec.view('S2')) for vec in vals]
-                #                  vals = np.array(vals)
-                #          else:
-                #                  vals = [val[0] for val in vals]
-                #                  vals = np.array(vals)
-                #          setattr(self, key, vals)
                 else:
                     setattr(self, key, out)
 

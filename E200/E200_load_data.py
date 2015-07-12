@@ -51,10 +51,10 @@ def _process_file(filename, temppath, matlab_verbose):
     
     logger.log(level=loggerlevel, msg='Command given is: {}'.format(command))
     if matlab_verbose:
+        _subprocess.call(command_split)
+    else:
         fnull = open(_os.devnull, 'w')
         _subprocess.call(command_split, stdout=fnull)
-    else:
-        _subprocess.call(command_split)
 
     # ======================================
     # Load file processed by matlab

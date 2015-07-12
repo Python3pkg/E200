@@ -3,15 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to E200
-===============
+Welcome to E200 v\ |release|
+============================
 
 E200 is designed to load and handle data generated at FACET at the SLAC National Accelerator Laboratory. In particular, it makes loading datasets and images much simpler.
 
 E200 Documentation
 ------------------
 
-This is the documentation for E200, last updated |today|.
+This is the documentation for E200 v\ |release|, last updated |today|.
 
 .. toctree::
    :numbered:

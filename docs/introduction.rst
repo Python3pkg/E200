@@ -75,6 +75,20 @@ Matlab
 
 #. Add downloaded software to the `Matlab path <http://www.mathworks.com/help/matlab/matlab_env/what-is-the-matlab-search-path.html#btqi_c6>`_
 
+HDF5 and h5py
+^^^^^^^^^^^^^
+
+While technically :mod:`E200` only depends on `h5py <http://www.h5py.org/>`_, :mod:`h5py` depends on `HDF5 <https://www.hdfgroup.org/HDF5/>`_. :mod:`h5py` can be installed via `pip <https://pypi.python.org/pypi/pip>`_::
+
+        pip install h5py
+
+However, `HDF5 <https://www.hdfgroup.org/HDF5/>`_ may need to be installed at the system level via apt-get or `Macports <https://www.macports.org/>`_.
+
+It is possible to download or compile `HDF5 <https://www.hdfgroup.org/HDF5/>`_ and `h5py <http://www.h5py.org/>`_ from source::
+
+* https://www.hdfgroup.org/HDF5/release/obtain5.html
+* https://pypi.python.org/pypi/h5py
+
 NumPy
 ^^^^^
 
@@ -83,7 +97,7 @@ NumPy
 PyQt4
 ^^^^^
 
-:mod:`E200` requires PyQt4, which has dependencies of its own. Installation via apt-get or `Macports <https://www.macports.org/>`_ is highly recommended in order to handle these dependencies.
+:mod:`E200` requires `PyQt4 <http://www.riverbankcomputing.com/software/pyqt/download>`_, which has dependencies of its own. Installation via apt-get or `Macports <https://www.macports.org/>`_ is highly recommended in order to handle these dependencies.
 
 It is possible, although difficult, to `install from source <http://pyqt.sourceforge.net/Docs/PyQt4/installation.html>`_, including dependencies. This was necessary on ``facet-srv20``; talk to Joel Frederico if you would like more information on running on ``facet-srv20``. If you would like to run on a \*nix machine without access to apt-get, you may have to compile from source. It is possible to `build against Qt 5 <http://pyqt.sourceforge.net/Docs/PyQt4/qt_v5.html>`_.
 
@@ -119,7 +133,7 @@ From the tarball release
 #. Unpack the tarball
 #. ``sudo python setup.py install``
 
-Note that you have to have setuptools installed.
+*Note that you have to have setuptools installed.*
 
 This will install :mod:`E200` into your Python installation’s site-packages directory.
 
@@ -131,7 +145,7 @@ Installing the development version
 #. ``cd E200``
 #. ``python setup.py develop``
 
-Note that you have to have setuptools installed.
+*Note that you have to have setuptools installed.*
 
 Basic Usage
 -----------

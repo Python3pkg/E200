@@ -17,7 +17,6 @@ import os
 import re
 import shlex
 import sphinx_py3doc_enhanced_theme
-import sphinx_py3doc_extended_theme
 import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -308,7 +307,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   (master_doc, 'E200', 'E200 Documentation',
-   author, 'E200', 'One line description of project.',
+   author, 'E200', 'Datatype specification and loading package.',
    'Miscellaneous'),
 ]
 

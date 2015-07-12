@@ -3,15 +3,17 @@ loggerlevel = 9
 loggerlevel = logging.DEBUG
 logger      = logging.getLogger(__name__)
 
-from .get_remoteprefix import *  # NOQA
+from .get_remoteprefix import choose_remoteprefix
+from .get_remoteprefix import get_remoteprefix
+from .get_remoteprefix import _get_datapath
 from glob import glob as _glob
 import os as _os
 on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
     import numpy as _np
-    import scisalt as _mt
     import scisalt.qt as _mtqt
     from PyQt4 import QtGui as _QtGui
+
 import os.path as _path
 import re as _re
 import warnings as _warnings
@@ -153,7 +155,7 @@ def get_valid_filename(pathstr, experiment, verbose=False, local=False):
             elif clicked[1]:
                 logger.log(level=loggerlevel, msg='Changing prefix')
 
-                prefix = _mt.E200.choose_remoteprefix(pathstart=prefix)
+                prefix = choose_remoteprefix(pathstart=prefix)
             # Locate file
             elif clicked[2]:
                 logger.log(level=loggerlevel, msg='Locating file')

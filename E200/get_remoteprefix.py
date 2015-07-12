@@ -1,11 +1,10 @@
-import sys as _sys
 import os as _os
 on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
     import numpy as _np
     from PyQt4 import QtGui
-    import scisalt.qt as mtqt
-
+    import scisalt.qt as _qt
+import sys as _sys
 import configparser as _ConfigParser
 import inspect as _inspect
 import logging as _logging
@@ -20,10 +19,10 @@ def_prefix = '/Volumes/PWFA_4big'
 
 
 def choose_remoteprefix(pathstart=def_prefix):
-    app = mtqt.get_app()  # NOQA
+    app = _qt.get_app()  # NOQA
     if not _os.path.isdir(pathstart):
         pathstart = _os.environ.get('HOME', _os.path.abspath(_os.sep))
-    prefix = mtqt.getExistingDirectory(caption='Change prefix', directory=pathstart)
+    prefix = _qt.getExistingDirectory(caption='Change prefix', directory=pathstart)
     if not _os.path.isdir(prefix):
         logger.critical('No directory selected: terminating.')
         raise IOError('No directory selected.')
@@ -35,7 +34,7 @@ def choose_remoteprefix(pathstart=def_prefix):
 
 
 def get_remoteprefix():
-    app = mtqt.get_app()  # NOQA
+    app = _qt.get_app()  # NOQA
 
     # =====================================
     # Default prefix
@@ -80,12 +79,12 @@ def _test_prefix(prefix):
         maintext = 'WARNING: Path to data doesn\'t exist!'
         infotext = 'Data not found at {}. Drive may not be mounted.'.format(prefix)
         buttons = _np.array([
-            mtqt.Button('Try again.', QtGui.QMessageBox.AcceptRole, default=True),
-            mtqt.Button('Locate folder containing /nas.', QtGui.QMessageBox.AcceptRole),
-            mtqt.Button(QtGui.QMessageBox.Abort, escape=True),
+            _qt.Button('Try again.', QtGui.QMessageBox.AcceptRole, default=True),
+            _qt.Button('Locate folder containing /nas.', QtGui.QMessageBox.AcceptRole),
+            _qt.Button(QtGui.QMessageBox.Abort, escape=True),
             ])
 
-        buttonbox = mtqt.ButtonMsg(title=title, maintext=maintext, infotext=infotext, buttons=buttons)
+        buttonbox = _qt.ButtonMsg(title=title, maintext=maintext, infotext=infotext, buttons=buttons)
         clicked = buttonbox.clickedArray
         # Locate folder...
         if clicked[1]:
