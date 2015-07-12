@@ -73,7 +73,7 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
         'Pillow>=2.8.1',
-        'SciSalt>=1.0.0',
+        'SciSalt>=1.1.0',
         'h5py',
         'numpy',
         'scipy',
