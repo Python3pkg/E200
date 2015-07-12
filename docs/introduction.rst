@@ -104,11 +104,13 @@ There are a few ways to install :mod:`E200`. If you are unsure or want something
 From PyPI
 ^^^^^^^^^
 
-You can install the most recent :mod:`E200` version using `pip <https://pypi.python.org/pypi/pip>`_::
+You can install the most recent `E200 version <https://pypi.python.org/pypi/E200>`_ using `pip <https://pypi.python.org/pypi/pip>`_::
 
         sudo pip install E200
 
 This will install :mod:`E200` in your Python installation’s site-packages directory.
+
+The PyPI site is found at https://pypi.python.org/pypi/E200.
 
 From the tarball release
 ^^^^^^^^^^^^^^^^^^^^^^^^
