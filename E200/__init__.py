@@ -11,7 +11,7 @@ __all__ = [
     'E200_load_images',
     'classes'
     ]
-__version__ = '1.3.3'
+__version__ = '1.3.4'
 from .setQS import *                                 # noqa
 from .E200_Image_Iter import *                       # noqa
 from .E200_load_data import *                        # noqa
