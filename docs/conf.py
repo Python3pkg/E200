@@ -35,9 +35,11 @@ import sys
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.pngmath',
+    'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
 ]
 
@@ -57,8 +59,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'E200'
-copyright = '2015, Joel Frederico'
-author = 'Joel Frederico'
+copyright = '2015, Joel Frederico, SLAC National Accelerator Laboratory'
+author = 'Joel Frederico, SLAC National Accelerator Laboratory'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -116,7 +118,7 @@ pygments_style = 'friendly'
 #keep_warnings = False
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-# todo_include_todos = True
+todo_include_todos = True
 
 
 # -- Options for HTML output ----------------------------------------------
@@ -322,3 +324,7 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {'https://docs.python.org/': None}

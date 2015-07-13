@@ -7,7 +7,7 @@ from . import classes
 
 def E200_api_getUID(dataset, val, f=None):
     """
-    Return all UIDs where *val* is equal to the value of the ``dat`` member of *dataset* (which must be either an :class:`E200.Drill` or an :class:`h5py.Group` class).
+    Return all UIDs where *val* is equal to the value of the ``dat`` member of *dataset* (which must be either an :class:`E200.Drill` or an :class:`h5py:Group` class).
 
     Returns an ``array`` of UIDs.
     """
