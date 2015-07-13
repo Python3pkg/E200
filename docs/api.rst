@@ -32,7 +32,7 @@ It becomes immediately obvious that loaded data is returned in the form of the c
 
         data.read_file
 
-It is cumbersome to find all of the nested dictionaries, as `tab completion <https://docs.python.org/3.4/tutorial/interactive.html#tab-completion-and-history-editing>` does not work for dictionaries in the Python interpreter. Each nested level must be explored individually::
+It is cumbersome to find all of the nested dictionaries, as `tab completion <https://docs.python.org/3.4/tutorial/interactive.html#tab-completion-and-history-editing>`_ does not work for dictionaries in the Python interpreter. Each nested level must be explored individually::
 
         >>> list(data.read_file['data'].keys())
         ['VersionInfo', 'processed', 'raw', 'user']
