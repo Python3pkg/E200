@@ -34,3 +34,4 @@ from .E200_dataset2str import *                      # noqa
 from .get_remoteprefix import *                      # noqa
 from .get_valid_filename import *                    # noqa
 from .classes import *                               # noqa
+from . import utils
