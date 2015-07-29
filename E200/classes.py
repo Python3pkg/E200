@@ -73,6 +73,8 @@ class Drill(object):
                     desc = desc.view('S2')
                     desc = _np.char.decode(desc, 'UTF-8')
                     setattr(self, key, ''.join(desc))
+                elif data.name == '/data/raw/metadata/E200_state' or data.name == '/data/raw/metadata/param':
+                    pass
                 elif key == 'dat' and ('UID' in data.keys()):
                     uids = data['UID'].value
                     dats = E200_api_getdat(data, uids)
