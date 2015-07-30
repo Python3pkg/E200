@@ -9,12 +9,15 @@ __all__ = [
     'E200_load_data',
     'E200_load_data_gui',
     'E200_load_images',
+    'E200_load_local',
     'classes'
     ]
+__all__.sort()
 __version__ = '1.3.4'
 from .setQS import *                                 # noqa
 from .E200_Image_Iter import *                       # noqa
 from .E200_load_data import *                        # noqa
+from .E200_load_local import E200_load_local
 from .E200_load_data_gui import E200_load_data_gui   # noqa
 from .E200_load_images import E200_load_images       # noqa
 from .E200_create_data import *                      # noqa

@@ -1,12 +1,13 @@
+import os as _os
+_on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
+if not _on_rtd:
+    import h5py as _h5
+
 from .E200_dataset2str import *     # NOQA
 from .classes import *              # NOQA
 from .get_valid_filename import *   # NOQA
 from .get_matlab import get_matlab
 import logging
-import os as _os
-on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
-if not on_rtd:
-    import h5py as _h5
 import shlex as _shlex
 import subprocess as _subprocess
 import tempfile as _tempfile

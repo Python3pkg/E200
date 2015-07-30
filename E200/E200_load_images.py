@@ -2,11 +2,11 @@
 from .E200_api_getdat import E200_api_getdat
 from .classes import *  # NOQA
 from .get_remoteprefix import get_remoteprefix
-import PIL
 import logging
 import os as _os
 on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
+    import PIL as _PIL
     import numpy as _np
     import scipy.io as _spio
 import os
@@ -20,6 +20,9 @@ def E200_load_images(img_dataset, UID=None):
 
     Returns an instance of :class:`E200.E200_Image`.
     """
+    # ======================================
+    # Determine if files are remote or local
+    # ======================================
     logger.log(level=loggerlevel, msg='Loading images...')
     try:
         remote_bool = img_dataset._hdf5.file['data']['VersionInfo']['remotefiles']['dat'][0, 0]
@@ -30,31 +33,45 @@ def E200_load_images(img_dataset, UID=None):
     else:
         prefix = ''
 
+    # ======================================
+    # Load image path
+    # ======================================
     imgdat = E200_api_getdat(img_dataset, UID=UID)
 
-    imgs = _np.array([PIL.Image.open(os.path.join(prefix, val[1:])) for val in imgdat.dat], dtype=object)
+    # ======================================
+    # Load images
+    # ======================================
+    imgs = _np.array([_PIL.Image.open(os.path.join(prefix, val[1:])) for val in imgdat.dat], dtype=object)
     num_imgs = _np.size(imgs)
+
     timestamps = _np.empty(num_imgs)
     for i, img in enumerate(imgs):
+        # ======================================
+        # Convert to 64-bit uint
+        # ======================================
         img_arr       = _np.asarray(img)
         imgs[i]       = _np.uint64(img_arr)
+
+        # ======================================
+        # Determine time stamps
+        # ======================================
         timestamps[i] = img.tag[65002][0]
 
+    # ======================================
+    # Load backgrounds
+    # ======================================
     logger.log(level=loggerlevel, msg='Loading backgrounds...')
 
     imgbgdat = E200_api_getdat(img_dataset, fieldname='background_dat', UID=imgdat.uid)
-
-    # for i, val in enumerate(imgbgdat.dat):
-    # print val
     i = 0
     val = imgbgdat.dat[i]
     val = os.path.join(prefix, val[1:])
     mat = _spio.loadmat(val)
     imgbg = mat['img']
+
+    # ======================================
+    # Load resolution
+    # ======================================
+    res = E200_api_getdat(img_dataset, fieldname='RESOLUTION', UID=imgdat.uid)
         
-    # if imgs[i].shape[0] == imgbg.shape[1]:
-    #     imgbg = _np.transpose(imgbg)
-
-    # imgs[i] = _np.fliplr(_np.abs(imgs[i]-_np.float64(imgbg)))
-
-    return E200_Image(images=_np.array(imgs), dat=imgdat.dat, uid=imgdat.uid, image_backgrounds=imgbg, timestamps=timestamps)
+    return E200_Image(images=_np.array(imgs), dat=imgdat.dat, uid=imgdat.uid, image_backgrounds=imgbg, timestamps=timestamps, res=res.dat)

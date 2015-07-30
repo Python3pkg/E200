@@ -105,7 +105,7 @@ class E200_Image(E200_Dat):
 
     **Should not be created directly, only accessed through** :func:`E200.E200_load_images`\ **.**
     """
-    def __init__(self, images, dat, uid, timestamps, image_backgrounds=None):
+    def __init__(self, images, dat, uid, timestamps, res, image_backgrounds=None):
         self._imgs_subbed = None
 
         E200_Dat.__init__(self, dat, uid, field='dat')
@@ -113,6 +113,14 @@ class E200_Image(E200_Dat):
         self._images            = images
         self._image_backgrounds = image_backgrounds
         self._timestamps        = timestamps
+        self._res               = res
+
+    @property
+    def res(self):
+        """
+        The resolution of the images in :math:`x` and :math:`y`, in the form of :code:`(res_x, res_y)`.
+        """
+        return self._res
 
     @property
     def images(self):
