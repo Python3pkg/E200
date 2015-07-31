@@ -1,21 +1,19 @@
-import os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import re as _np
-    import re as _h5
-else:
+import os as _os
+_on_rtd = _os.environ.get('READTHEDOCS', None) == 'True'
+if not _on_rtd:
     import numpy as _np
     import h5py as _h5
+
 import uuid as _uuid
-import warnings
 
 import logging
 logger = logging.getLogger(__name__)
-#  loggerlevel = logging.DEBUG
-loggerlevel = 9
 
 
 def E200_api_updateUID(group, UID, value, verbose=False):
+    """
+    Adds UIDs?
+    """
     if _np.size(UID) > 1:
         # ======================================
         # Run through list of UID's, processing
@@ -47,7 +45,7 @@ def E200_api_updateUID(group, UID, value, verbose=False):
         uids      = uid_dset.value
         # dat_refs  = dat_dset.value
         
-        logger.log(level=loggerlevel, msg='UID to update: {}, value: {}'.format(UID, value))
+        logger.info('UID to update: {}, value: {}'.format(UID, value))
         
         # ======================================
         # Validate it's a numpy array
@@ -65,7 +63,7 @@ def E200_api_updateUID(group, UID, value, verbose=False):
             # ======================================
             # Add new UID and value
             # ======================================
-            logger.log(level=loggerlevel, msg='Adding new UID...')
+            logger.info('Adding new UID...')
             
             uuid_val = str(_uuid.uuid1())
             uuid_ref = refs_dset.create_dataset(name=uuid_val, data=value)
@@ -82,7 +80,7 @@ def E200_api_updateUID(group, UID, value, verbose=False):
             # ======================================
             # Delete old UID dataset
             # ======================================
-            logger.log(level=loggerlevel, msg='Replacing existing UID...')
+            logger.info('Replacing existing UID...')
             ind = uid_match_inds[0]
             ref = dat_dset.value[ind]
             ref_name = group.file[ref].name

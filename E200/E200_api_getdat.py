@@ -4,9 +4,12 @@ if not _on_rtd:
     import numpy as _np
     import h5py as _h5
 
+import ipdb as pdb
+import re as _re
 import logging as _logging
 _logger = _logging.getLogger(__name__)
-from .E200_Dat import *  # noqa
+
+from .E200_Dat import E200_Dat
 __all__ = ['E200_api_getdat', '_numarray2str']
 
 
@@ -16,7 +19,7 @@ def _numarray2str(numarray):
     return string
 
 
-def E200_api_getdat(dataset, UID=None, fieldname='dat'):
+def E200_api_getdat(dataset, UID=None, fieldname='dat', default=None):
     """
     Load data from a *dataset*, which must be either an :class:`E200.Drill` or an :class:`h5py.Group` class. If no *UID* is given, all available UIDs are loaded. The *fieldname* determines which member is loaded from the *dataset*.
 
@@ -25,7 +28,6 @@ def E200_api_getdat(dataset, UID=None, fieldname='dat'):
     if type(dataset) != _h5.Group:
             dataset = dataset._hdf5
 
-    _logger.log(level=10, msg='==============================')
     _logger.debug('Accessing: {}'.format(dataset.name))
     # ======================================
     # Check version
@@ -63,20 +65,24 @@ def E200_api_getdat(dataset, UID=None, fieldname='dat'):
         # ======================================
         # Deref if necessary
         # ======================================
-        if type(dataset[fieldname][0][0]) == _h5.h5r.Reference:
-            vals = [dataset.file[val[0]] for val in dataset[fieldname]]
+        if not _re.match('/data/', dataset.name):
+            vals = [dataset.file[val] for val in dataset[fieldname]]
+            vals = _np.array(vals)
         else:
-            vals = [val for val in dataset[fieldname]]
+            if type(dataset[fieldname][0][0]) == _h5.h5r.Reference:
+                vals = [dataset.file[val[0]] for val in dataset[fieldname]]
+            else:
+                vals = [val for val in dataset[fieldname]]
 
-        if vals[0].shape[0] > 1:
-            vals = [_np.array(val).flatten() for val in vals]
-            # vals = [''.join(vec.view('S2')) for vec in vals]
-            vals = [[chr(vec) for vec in val] for val in vals]
-            vals = [''.join(val) for val in vals]
-            vals = _np.array(vals)
-        else:
-            vals = [val[0] for val in vals]
-            vals = _np.array(vals)
+            if vals[0].shape[0] > 1:
+                vals = [_np.array(val).flatten() for val in vals]
+                # vals = [''.join(vec.view('S2')) for vec in vals]
+                vals = [[chr(vec) for vec in val] for val in vals]
+                vals = [''.join(val) for val in vals]
+                vals = _np.array(vals)
+            else:
+                vals = [val[0] for val in vals]
+                vals = _np.array(vals)
 
     avail_uids_num = _np.size(avail_uids)
     _logger.debug('Number of available uids: {}'.format(avail_uids_num))
@@ -88,23 +94,69 @@ def E200_api_getdat(dataset, UID=None, fieldname='dat'):
         out_vals = vals
     elif avail_uids_num == 1:
         # ======================================
-        # Match UIDs
+        # One UID, matches
         # ======================================
         if avail_uids == UID:
             _logger.debug('Not empty')
             out_uids = _np.array([avail_uids])
             out_vals = _np.array([vals]).flatten()
-        else:
+        # ======================================
+        # One uid, no match, no default
+        # ======================================
+        elif default is None:
             out_uids = _np.array([])
             out_vals = _np.array([])
+        # ======================================
+        # One UID, no match, default
+        # ======================================
+        elif default is not None:
+            out_uids = _np.array([UID])
+            out_vals = _np.array([default])
     else:
         # ======================================
-        # Match UIDs
+        # Multiple available UIDs
         # ======================================
         valbool  = _np.in1d(avail_uids, UID)
         out_vals = vals[valbool]
 
         out_uids = avail_uids[valbool]
+
+        # ======================================
+        # Fill in default
+        # ======================================
+        if default is not None:
+            default = _np.array(default)
+
+            # ======================================
+            # Find UIDs without values
+            # ======================================
+            diff_uids = _np.setxor1d(avail_uids, UID)
+            diff_uids = _np.intersect1d(diff_uids, UID)
+
+            # ======================================
+            # If default is the wrong shape, use an
+            # array with the first value of default
+            # ======================================
+            if out_vals.size > 0:
+                if default.shape != out_vals[0].shape:
+                    default_orig = default
+                    default = _np.ones_like(out_vals[0]) * default.flatten()[0]
+                    _logger.warning('Default wrong shape: {}. Setting defaults as: {}'.format(default_orig, default), stack_info=True)
+
+            # ======================================
+            # Create diff_vals array, right size,
+            # with defaults
+            # ======================================
+            shape = (diff_uids.size,) + default.shape
+
+            diff_vals = _np.empty(shape)
+            diff_vals[:] = default
+
+            # ======================================
+            # Combine with found uids, values
+            # ======================================
+            out_uids = _np.concatenate([out_uids, diff_uids])
+            out_vals = _np.concatenate([out_vals, diff_vals])
 
     # ======================================
     # Sort UIDs
@@ -116,6 +168,9 @@ def E200_api_getdat(dataset, UID=None, fieldname='dat'):
     n_uids = _np.size(out_uids)
     _logger.debug('Number of UIDs found: {}'.format(n_uids))
 
+    # ======================================
+    # Print UIDs for debugging
+    # ======================================
     if n_uids > 10:
         _logger.debug('Showing only first 10 UIDs')
         show_uids = out_uids[0:10]

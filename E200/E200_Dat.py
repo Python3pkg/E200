@@ -20,7 +20,8 @@ class E200_Dat(object):
         return [val[0] for val in _ins.getmembers(self)]
 
     def __init__(self, dat, uid, field):
-        self._dat = _np.array([dat]).flatten()
+        # self._dat = _np.array([dat]).flatten()
+        self._dat = dat
         self._uid = _np.int64([uid]).flatten()
         self._field = field
 

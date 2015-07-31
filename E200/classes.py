@@ -18,13 +18,13 @@ class Data(object):
 
     **Should not be created directly, only accessed through** :func:`E200.E200_load_data` **or** :func:`E200.E200_load_data_gui`\ **.**
     """
-    def __init__(self, read_file, filename=None):
+    def __init__(self, read_file, filename=None, write_file=None):
+        # ======================================
+        # Create different kinds of groups
+        # ======================================
         self._filename = filename
         self.read_file = read_file
         self.rdrill    = Drill(read_file)
-
-        # self.data=datalevel()
-        # recursivePopulate(self._data, self)
 
     def __enter__(self):
         return self
