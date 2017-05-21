@@ -19,7 +19,7 @@ def E200_create_data(group_parent, group_name):
     # ======================================
     # Check if group name already exists
     # ======================================
-    if group_name in group_parent.keys():
+    if group_name in list(group_parent.keys()):
         logger.log(level=loggerlevel, msg='Data with name "{}" already exists.'.format(group_name))
         return group_parent[group_name]
 

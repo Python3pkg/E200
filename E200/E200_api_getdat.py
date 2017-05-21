@@ -32,7 +32,7 @@ def E200_api_getdat(dataset, UID=None, fieldname='dat'):
     # ======================================
     # Check version
     # ======================================
-    version_bool = 'origin' in dataset.file.attrs.keys()
+    version_bool = 'origin' in list(dataset.file.attrs.keys())
     if version_bool:
         python_version_bool = (dataset.file.attrs['origin'] == 'python-h5py')
     else:

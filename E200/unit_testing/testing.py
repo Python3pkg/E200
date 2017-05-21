@@ -38,9 +38,9 @@ mt.E200.E200_api_updateUID(test_scalar, test_uids, test_values, verbose=verbose)
 
 # Show scalars
 if verbose:
-    print(test_scalar['UID'].value)
+    print((test_scalar['UID'].value))
     for val in test_scalar['dat'].value:
-        print(test_scalar.file[val].value)
+        print((test_scalar.file[val].value))
 
 # Change scalars
 test_uids   = np.array([9, 6])
@@ -51,9 +51,9 @@ mt.E200.E200_api_updateUID(test_scalar, test_uids, test_values, verbose=verbose)
 
 # Show scalars
 if verbose:
-    print(test_scalar['UID'].value)
+    print((test_scalar['UID'].value))
     for val in test_scalar['dat'].value:
-        print(test_scalar.file[val].value)
+        print((test_scalar.file[val].value))
 
 # ======================================
 # Vector test
@@ -76,9 +76,9 @@ mt.E200.E200_api_updateUID(test_vector, test_uids, test_values, verbose=verbose)
 
 # Show vectors
 if verbose:
-    print(test_vector['UID'].value)
+    print((test_vector['UID'].value))
     for val in test_vector['dat'].value:
-        print(test_vector.file[val].value)
+        print((test_vector.file[val].value))
 
 # Change vectors
 test_uids   = np.array([9, 6])
@@ -90,17 +90,17 @@ mt.E200.E200_api_updateUID(test_vector, test_uids, test_values, verbose=verbose)
 
 # Show vectors
 if verbose:
-    print(test_vector['UID'].value)
+    print((test_vector['UID'].value))
     for val in test_vector['dat'].value:
-        print(test_vector.file[val].value)
+        print((test_vector.file[val].value))
 
 # Show
 wanted_uids = np.array([9, 7, 4])
 returned_dat = mt.E200.E200_api_getdat(test_vector, uids=wanted_uids, verbose=True)
 if verbose:
     print('\tReturned info:')
-    print(returned_dat.UID)
-    print(returned_dat.dat)
+    print((returned_dat.UID))
+    print((returned_dat.dat))
 
 
 # ======================================
@@ -126,9 +126,9 @@ mt.E200.E200_api_updateUID(test_array, test_uids, test_values, verbose=verbose)
 
 # Show arrays
 if verbose:
-    print(test_array['UID'].value)
+    print((test_array['UID'].value))
     for val in test_array['dat'].value:
-        print(test_array.file[val].value)
+        print((test_array.file[val].value))
 
 # Change arrays
 test_uids   = np.array([9, 6])
@@ -142,6 +142,6 @@ mt.E200.E200_api_updateUID(test_array, test_uids, test_values, verbose=verbose)
 
 # Show arrays
 if verbose:
-    print(test_array['UID'].value)
+    print((test_array['UID'].value))
     for val in test_array['dat'].value:
-        print(test_array.file[val].value)
+        print((test_array.file[val].value))

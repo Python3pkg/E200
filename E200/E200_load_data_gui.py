@@ -54,7 +54,7 @@ def E200_load_data_gui(experiment=None, verbose=False):
 
     logstring = 'File to load is: {}'.format(loadfile)
     if verbose:
-        print('In order to load file:\ndata = E200.E200_load_data(\'{}\')'.format(loadfile))
+        print(('In order to load file:\ndata = E200.E200_load_data(\'{}\')'.format(loadfile)))
 
     logger.info(logstring)
 

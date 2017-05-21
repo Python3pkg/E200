@@ -118,24 +118,24 @@ def eaxis_CMOS_far(y, res, E0=None, etay=None, etapy=None, img=None):
     if min(y) < 0:
         raise ValueError('y<0 indicates my arbitrary offset is bad. Change source code!')
     if etay is None:
-        etay = input('Dispersion in y in mm (eta_y)? ')
+        etay = eval(input('Dispersion in y in mm (eta_y)? '))
         etay = etay * 1e-3
-        print('Dispersion entered is {}'.format(etay))
+        print(('Dispersion entered is {}'.format(etay)))
 
     if etapy is None:
-        etapy = input('Dispersion-prime in y in mrad (eta''_y)? ')
+        etapy = eval(input('Dispersion-prime in y in mrad (eta''_y)? '))
         etapy = etapy * 1e-3
-        print('Dispersion-prime entered is {}'.format(etapy))
+        print(('Dispersion-prime entered is {}'.format(etapy)))
 
     if img is not None:
         plt.imshow(img)
         plt.show()
     if ypinch is None:
-        ypinch = input('Location of zero energy in y in pixels? ')
+        ypinch = eval(input('Location of zero energy in y in pixels? '))
 
     # E0 = 20.35
     if E0 is None:
-        E0 = input('Zero energy in GeV? ')
+        E0 = eval(input('Zero energy in GeV? '))
     theta = 6e-3
 
     Lmag   = 2*4.889500000E-01

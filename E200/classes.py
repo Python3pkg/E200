@@ -63,7 +63,7 @@ class Drill(object):
     """
     def __init__(self, data):
         self._hdf5 = data
-        for key in data.keys():
+        for key in list(data.keys()):
             if key[0] != '#':
                 out = data[key]
                 if type(out) == _h5._hl.group.Group:
@@ -73,7 +73,7 @@ class Drill(object):
                     desc = desc.view('S2')
                     desc = _np.char.decode(desc, 'UTF-8')
                     setattr(self, key, ''.join(desc))
-                elif key == 'dat' and ('UID' in data.keys()):
+                elif key == 'dat' and ('UID' in list(data.keys())):
                     uids = data['UID'].value
                     dats = E200_api_getdat(data, uids)
                     setattr(self, key, dats.dat)
@@ -88,7 +88,7 @@ class Drill(object):
 
     def __repr__(self):
         out = '\<E200.E200_load_data.Drill with keys:\n_hdf5'
-        for val in self._hdf5.keys():
+        for val in list(self._hdf5.keys()):
             out = out + '\n' + val
 
         out = out[1:] + '\n>'
